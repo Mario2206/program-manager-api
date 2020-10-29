@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import express from "express"
+import bodyparser from "body-parser"
 import errorHandler from "./controller/error-handler"
 import core from "express"
 import userRoute from "./routes/users-route"
@@ -9,6 +10,8 @@ import userRoute from "./routes/users-route"
 function app () : core.Express {
         
     const app = express()
+
+    app.use(bodyparser.json())
 
     app.use("/users", userRoute)
 

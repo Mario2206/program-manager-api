@@ -1,6 +1,6 @@
 import { mockRequest, mockResponse } from "mock-req-res"
 import errorHandler from "../../src/controller/error-handler"
-import Error from "../../src/entities/Error"
+import ErrorService from "../../src/entities/error-service"
 
 describe("Error-Handler", ()=> {
 
@@ -11,9 +11,8 @@ describe("Error-Handler", ()=> {
 
         const request = mockRequest()
         const response = mockResponse()
-        const error = new Error(expectedStatus,expectedMessage)
-
-        
+        const error = new ErrorService(expectedStatus,expectedMessage)
+                
         errorHandler(error, request, response)
         
         expect(response.json).toHaveBeenCalledWith(expectedMessage)

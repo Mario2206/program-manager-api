@@ -1,6 +1,6 @@
-import IEError from "../abstract/entities/IEError"
+import IEErrorService from "../abstract/entities/IErrorService"
 
-export default class Error implements IEError {
+export default class ErrorService implements IEErrorService  {
 
     /*
         HTTP STATUS
