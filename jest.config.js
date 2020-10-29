@@ -2,5 +2,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  rootDir: './test/'
+  rootDir: './test/',
+  setupFilesAfterEnv: ["jest-sinon"]
 }
