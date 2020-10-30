@@ -1,4 +1,4 @@
-export default interface IEErrorService {
-    message : string, 
+export default interface IEErrorService<T> {
+    message : T, 
     status : number
 }

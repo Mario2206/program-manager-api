@@ -1,4 +1,4 @@
-import { mockRequest, mockResponse } from "mock-req-res"
+import httpMocks from "node-mocks-http"
 import errorHandler from "../../src/controller/error-handler"
 import ErrorService from "../../src/entities/error-service"
 
@@ -9,8 +9,12 @@ describe("Error-Handler", ()=> {
         const expectedMessage = "Error Message"
         const expectedStatus = 500
 
-        const request = mockRequest()
-        const response = mockResponse()
+        const request = httpMocks.createRequest()
+        const response = httpMocks.createResponse()
+        
+        response.json = jest.fn(()=>response)
+        response.status = jest.fn(()=>response)
+
         const error = new ErrorService(expectedStatus,expectedMessage)
                 
         errorHandler(error, request, response)

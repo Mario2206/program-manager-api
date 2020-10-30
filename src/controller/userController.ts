@@ -1,6 +1,6 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 
-export default class User {
+export default class UserController {
 
     public subscribeUser(req : Request, res : Response, next : NextFunction) : void {
         res.status(200).json("ok")
