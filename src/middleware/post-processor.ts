@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request } from "express";
-import { IELitteralObject } from "../abstract/ICommon";
-import {middleware} from "../abstract/middleware/middleware"
+import { IELitteralObject } from "../abstract/int-common";
+import {middleware} from "../abstract/middleware/type-middleware"
 import { FILTER_KEYS_ERROR } from "../constants/error";
 import { HTTP_BAD_REQUEST, HTTP_SERVER_ERROR } from "../constants/http";
 import ErrorService from "../entities/error-service";

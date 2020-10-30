@@ -1,4 +1,4 @@
-import IEErrorService from "../abstract/entities/IErrorService"
+import IEErrorService from "../abstract/entities/int-error-service"
 
 export default class ErrorService<T = string> implements IEErrorService<T>  {
 
