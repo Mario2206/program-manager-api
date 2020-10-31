@@ -1,8 +1,6 @@
-import { MAIL_FORMAT_ERROR, PASSWORD_FORMAT_ERROR } from "../../src/constants/error"
 import PostValidator from "../../src/middleware/post-validator"
 import UserSubValidator from "../../src/entities/user-sub-validator"
 import { generateMockRequestResponse } from "../utils"
-
 
 describe("PostValidator", ()=> {
     
@@ -10,7 +8,10 @@ describe("PostValidator", ()=> {
 
         it("should throw an error when some validations are uncorrect",async  () => {
 
-            const expectedErrors = [PASSWORD_FORMAT_ERROR,MAIL_FORMAT_ERROR]
+            const expectedErrors = [
+                UserSubValidator.errors.PASSWORD_FORMAT_ERROR,
+                UserSubValidator.errors.MAIL_FORMAT_ERROR
+            ]
             const reqBodyForSub = {
                 firstname : "mario",
                 lastname : "supertest",

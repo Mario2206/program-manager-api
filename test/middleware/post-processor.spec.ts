@@ -1,4 +1,3 @@
-import { FILTER_KEYS_ERROR } from "../../src/constants/error"
 import PostProcessor from "../../src/middleware/post-processor"
 import { generateMockRequestResponse } from "../utils"
 
@@ -55,7 +54,7 @@ describe("PostProcessor::checkKeys", ()=> {
         it("should throw an error when required keys are missing after filtering", () => {
             const expectedKeys = ["name", "firstname", "mail"]
             const body = { firstname : "mars", mail : "mail", sup : "sup"}
-            const expectedErrorMessage = FILTER_KEYS_ERROR
+            const expectedErrorMessage = PostProcessor.errors.FILTER_KEYS_ERROR
     
             const {request, response} = generateMockRequestResponse({body})
             const next = jest.fn()

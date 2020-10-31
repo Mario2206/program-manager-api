@@ -6,15 +6,28 @@ import { middleware } from "../abstract/middleware/type-middleware";
 import { HTTP_BAD_REQUEST } from "../constants/http";
 import ErrorService from "../entities/error-service";
 
-
+/**
+ * For managing validators and the potential errors
+ */
 
 export default class PostValidator {
     
-
+    /**
+     * Exposed method for validating a request according a validator
+     * 
+     * @param validator 
+     * return middleware
+     */
     public static validateRequest (validator : IValidator) : middleware {
         return this.checkErrorValidation(validator.validators)
     }
 
+    /**
+     * For managing request according validators
+     * @param validations 
+     * 
+     * return middleware / throw an ErrorService
+     */
     private static checkErrorValidation (validations : Array<ValidationChain>) : middleware {
         return async (req : Request, res : Response, next : NextFunction) => {
 

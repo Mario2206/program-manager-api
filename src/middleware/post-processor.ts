@@ -1,11 +1,18 @@
 import { NextFunction, Response, Request } from "express";
 import { IELitteralObject } from "../abstract/int-common";
 import {middleware} from "../abstract/middleware/type-middleware"
-import { FILTER_KEYS_ERROR } from "../constants/error";
 import { HTTP_BAD_REQUEST, HTTP_SERVER_ERROR } from "../constants/http";
 import ErrorService from "../entities/error-service";
 
+/**
+ * Class for processing the body of a request
+ */
+
 export default class PostProcessor {
+
+    public static errors = {
+        FILTER_KEYS_ERROR : "Please checking the post keys before filtering them"
+    }
     
     /**
      * For checking if all required keys are present in the request body
@@ -46,7 +53,7 @@ export default class PostProcessor {
             .reduce((body : IELitteralObject, currentKey : string) => (body[currentKey] = req.body[currentKey], body), {})
             
             if(Object.keys(req.body).length !== requiredKeys.length) {
-                throw new ErrorService(HTTP_SERVER_ERROR, FILTER_KEYS_ERROR)
+                throw new ErrorService(HTTP_SERVER_ERROR, PostProcessor.errors.FILTER_KEYS_ERROR)
             }
 
             next()

@@ -1,6 +1,8 @@
-export default class UserEntity {
+import Model from "../model"
 
-    private _id: number
+export default class UserEntity extends Model{
+
+    private _id: number | null
 
     private _firstname : string
 
@@ -12,16 +14,17 @@ export default class UserEntity {
 
     private _password : string
 
-    constructor(data : {id : number, firstname : string, lastname : string, username : string, mail : string, password : string}) {
-        this._id = data.id
-        this._firstname = data.firstname
+    constructor(data = {id : null, firstname : "", lastname : "", username : "", mail : "", password : ""}) {
+        super()
+        this._id = data.id 
+        this._firstname = data.firstname 
         this._lastname = data.lastname
         this._username = data.username
         this._mail = data.mail
         this._password = data.password
     }
 
-    public get id(): number {
+    public get id(): number | null {
         return this._id
     }
 
@@ -29,40 +32,45 @@ export default class UserEntity {
         return this._firstname
     }
 
-    public set firstname (firstname : string) {
+    public setFirstname (firstname : string) : UserEntity{
         this._firstname = firstname
+        return this
     }
 
     public get lastname () : string {
         return this._lastname
     }
 
-    public set lastanme (lastname : string) {
-        this.lastanme = lastname
+    public setLastanme (lastname : string) : UserEntity{
+        this._lastname = lastname
+        return this
     }
 
-    get username(): string {
+    public get username(): string {
         return this._username;
     }
 
-    set username(value: string) {
+    public setUsername(value: string) : UserEntity{
         this._username = value;
+        return this
     }
 
-    get mail(): string {
+    public get mail(): string {
         return this._mail;
     }
 
-    set mail(value: string) {
+    public setMail(value: string) : UserEntity{
         this._mail = value;
+        return this
     }
 
-    get password(): string {
+    public get password(): string {
         return this._password;
     }
 
-    set password(value: string) {
+    public setPassword(value: string) : UserEntity{
         this._password = value;
+        return this
     }
 
 }
