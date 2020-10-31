@@ -1,6 +1,6 @@
-import httpMocks from "node-mocks-http"
 import { FILTER_KEYS_ERROR } from "../../src/constants/error"
 import PostProcessor from "../../src/middleware/post-processor"
+import { generateMockRequestResponse } from "../utils"
 
 describe("PostProcessor::checkKeys", ()=> {
 
@@ -11,8 +11,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const post = {name : "mario"}
             const expectedMessage = "firstname, mail missing"
 
-            const request = httpMocks.createRequest({body : post})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body : post})
             const next = jest.fn()
 
             try {
@@ -27,8 +26,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const expectedKeys = ["name", "firstname", "mail"]
             const post = {name : "mario", firstname : "mars", mail : "mail"}
 
-            const request = httpMocks.createRequest({body : post})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body : post})
             const next = jest.fn()
 
             try {
@@ -46,8 +44,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const body = {name : "mario", firstname : "mars", mail : "mail", sup : "sup"}
             const filteredBody = {name : "mario", firstname : "mars", mail : "mail"}
     
-            const request = httpMocks.createRequest({body})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body})
             const next = jest.fn()
     
             PostProcessor.filterKeys(expectedKeys)(request, response, next)
@@ -60,8 +57,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const body = { firstname : "mars", mail : "mail", sup : "sup"}
             const expectedErrorMessage = FILTER_KEYS_ERROR
     
-            const request = httpMocks.createRequest({body})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body})
             const next = jest.fn()
     
             try {

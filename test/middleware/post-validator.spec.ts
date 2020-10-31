@@ -1,7 +1,7 @@
 import { MAIL_FORMAT_ERROR, PASSWORD_FORMAT_ERROR } from "../../src/constants/error"
 import PostValidator from "../../src/middleware/post-validator"
-import httpMocks from "node-mocks-http"
 import UserSubValidator from "../../src/entities/user-sub-validator"
+import { generateMockRequestResponse } from "../utils"
 
 
 describe("PostValidator", ()=> {
@@ -18,9 +18,7 @@ describe("PostValidator", ()=> {
                 mail : "mail",
                 password : ""
             }
-
-            const request = httpMocks.createRequest({body : reqBodyForSub}) 
-            const response = httpMocks.createResponse() 
+            const {request, response } = generateMockRequestResponse({body : reqBodyForSub})
             const nextmock = jest.fn()
 
             const middleware = PostValidator.validateRequest(new UserSubValidator())
@@ -44,8 +42,7 @@ describe("PostValidator", ()=> {
                 password : "password"
             }
 
-            const request = httpMocks.createRequest({body : reqBodyForSub}) 
-            const response = httpMocks.createResponse() 
+            const {request, response } = generateMockRequestResponse({body : reqBodyForSub})
             const nextmock = jest.fn()
 
             const middleware = PostValidator.validateRequest(new UserSubValidator())

@@ -1,5 +1,5 @@
-import httpMocks from "node-mocks-http"
 import CryptString from "../../src/middleware/crypt-string"
+import { generateMockRequestResponse } from "../utils"
 describe("CryptString", () => {
 
     describe("When a key name is passed for crypting the corresponding value", () => {
@@ -7,8 +7,7 @@ describe("CryptString", () => {
         it("should throw an error when the argument representing the key name is empty", () => {
             const keyname = ""
 
-            const request = httpMocks.createRequest()
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse()
             const next = jest.fn()
 
             try {
@@ -22,8 +21,7 @@ describe("CryptString", () => {
             const keyname = ""
             const body = {}
 
-            const request = httpMocks.createRequest({body})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body})
             const next = jest.fn()
 
             try {
@@ -37,8 +35,7 @@ describe("CryptString", () => {
             const keyname = "key"
             const body = {key : "valueToCrypt"}
 
-            const request = httpMocks.createRequest({body})
-            const response = httpMocks.createResponse()
+            const {request, response} = generateMockRequestResponse({body})
             const next = jest.fn()
 
             try {
