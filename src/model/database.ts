@@ -1,16 +1,6 @@
-import { Pool, QueryResult } from "pg"
+//@ts-ignore
+import knex from "../../db/knex.js"
 
-class Database {
+const database = knex
 
-    private client : Pool
-
-    constructor() {
-        this.client = new Pool()
-    }
-
-    public query(request : string, params : Array<string>) : Promise<QueryResult> {
-        return this.client.query(request, params)
-    }
-}
-
-export default Database
+export default database

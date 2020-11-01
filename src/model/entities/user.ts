@@ -1,6 +1,6 @@
 import Model from "../model"
 
-export default class UserEntity extends Model{
+export default class User extends Model{
 
     private _id: number | null
 
@@ -14,7 +14,9 @@ export default class UserEntity extends Model{
 
     private _password : string
 
-    constructor(data = {id : null, firstname : "", lastname : "", username : "", mail : "", password : ""}) {
+    private _created_at : Date
+
+    constructor(data = {id : null, firstname : "", lastname : "", username : "", mail : "", password : "", created_at : new Date()}) {
         super()
         this._id = data.id 
         this._firstname = data.firstname 
@@ -22,6 +24,7 @@ export default class UserEntity extends Model{
         this._username = data.username
         this._mail = data.mail
         this._password = data.password
+        this._created_at = data.created_at
     }
 
     public get id(): number | null {
@@ -32,7 +35,7 @@ export default class UserEntity extends Model{
         return this._firstname
     }
 
-    public setFirstname (firstname : string) : UserEntity{
+    public setFirstname (firstname : string) : User{
         this._firstname = firstname
         return this
     }
@@ -41,7 +44,7 @@ export default class UserEntity extends Model{
         return this._lastname
     }
 
-    public setLastanme (lastname : string) : UserEntity{
+    public setLastanme (lastname : string) : User{
         this._lastname = lastname
         return this
     }
@@ -50,7 +53,7 @@ export default class UserEntity extends Model{
         return this._username;
     }
 
-    public setUsername(value: string) : UserEntity{
+    public setUsername(value: string) : User{
         this._username = value;
         return this
     }
@@ -59,7 +62,7 @@ export default class UserEntity extends Model{
         return this._mail;
     }
 
-    public setMail(value: string) : UserEntity{
+    public setMail(value: string) : User{
         this._mail = value;
         return this
     }
@@ -68,8 +71,17 @@ export default class UserEntity extends Model{
         return this._password;
     }
 
-    public setPassword(value: string) : UserEntity{
+    public setPassword(value: string) : User{
         this._password = value;
+        return this
+    }
+
+    public get createdAt() : Date {
+        return this._created_at
+    }
+
+    public setCreatedAt (date : Date) : User {
+        this._created_at = date
         return this
     }
 
