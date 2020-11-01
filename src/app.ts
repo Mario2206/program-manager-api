@@ -6,8 +6,11 @@ import bodyparser from "body-parser"
 import errorHandler from "./controller/error-handler"
 import core from "express"
 import userRoute from "./routes/users-route"
+import Database from "./database/database"
 
-function app () : core.Express {
+async function app () : Promise<core.Express> {
+
+    await Database.connect()
         
     const app = express()
 
