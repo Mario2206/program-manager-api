@@ -3,20 +3,22 @@ import { Connection, createConnection, EntityManager, EntityTarget, getConnectio
 export default class Database {
 
 
+    public static connectName : string = process.env.NODE_ENV ?? "development"
+
     public static connect() : Promise<Connection> {
-        return createConnection()
+        return createConnection(Database.connectName)
     }
 
     public static disconnect() : Promise<void> {
-        return getConnection().close()
+        return getConnection(Database.connectName).close()
     }
 
     public static getManager() : EntityManager {
-        return getManager()
+        return getManager(Database.connectName)
     }
 
     public static getConnection() : Connection {
-        return getConnection()
+        return getConnection(Database.connectName)
     }
 
     public static getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity> {
@@ -24,7 +26,7 @@ export default class Database {
     }
     
     public static  clean(tableName : string) : Promise<void> {
-        return getConnection().query(`TRUNCATE TABLE "${tableName}"` )
+        return getConnection(Database.connectName).query(`TRUNCATE TABLE "${tableName}"` )
     }
 
 }

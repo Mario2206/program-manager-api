@@ -10,7 +10,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const post = {name : "mario"}
             const expectedMessage = "firstname, mail missing"
 
-            const {request, response} = generateMockRequestResponse({body : post})
+            const [request, response] = generateMockRequestResponse({body : post})
             const next = jest.fn()
 
             try {
@@ -25,7 +25,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const expectedKeys = ["name", "firstname", "mail"]
             const post = {name : "mario", firstname : "mars", mail : "mail"}
 
-            const {request, response} = generateMockRequestResponse({body : post})
+            const [request, response] = generateMockRequestResponse({body : post})
             const next = jest.fn()
 
             try {
@@ -43,7 +43,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const body = {name : "mario", firstname : "mars", mail : "mail", sup : "sup"}
             const filteredBody = {name : "mario", firstname : "mars", mail : "mail"}
     
-            const {request, response} = generateMockRequestResponse({body})
+            const [request, response] = generateMockRequestResponse({body})
             const next = jest.fn()
     
             PostProcessor.filterKeys(expectedKeys)(request, response, next)
@@ -56,7 +56,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const body = { firstname : "mars", mail : "mail", sup : "sup"}
             const expectedErrorMessage = PostProcessor.errors.FILTER_KEYS_ERROR
     
-            const {request, response} = generateMockRequestResponse({body})
+            const [request, response] = generateMockRequestResponse({body})
             const next = jest.fn()
     
             try {

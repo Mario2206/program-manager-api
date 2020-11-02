@@ -19,7 +19,7 @@ describe("PostValidator", ()=> {
                 mail : "mail",
                 password : ""
             }
-            const {request, response } = generateMockRequestResponse({body : reqBodyForSub})
+            const [request, response] = generateMockRequestResponse({body : reqBodyForSub})
             const nextmock = jest.fn()
 
             const middleware = PostValidator.validateRequest(new UserSubValidator())
@@ -43,7 +43,7 @@ describe("PostValidator", ()=> {
                 password : "password"
             }
 
-            const {request, response } = generateMockRequestResponse({body : reqBodyForSub})
+            const [request, response] = generateMockRequestResponse({body : reqBodyForSub})
             const nextmock = jest.fn()
 
             const middleware = PostValidator.validateRequest(new UserSubValidator())

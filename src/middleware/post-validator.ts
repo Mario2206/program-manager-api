@@ -30,13 +30,15 @@ export default class PostValidator {
      */
     private static checkErrorValidation (validations : Array<ValidationChain>) : middleware {
         return async (req : Request, res : Response, next : NextFunction) => {
+            
 
             await Promise.all(validations.map( (validation : ValidationChain) =>validation.run(req)))
 
             const errors = validationResult(req)
 
             if(!errors.isEmpty()){
-                throw new ErrorService(HTTP_BAD_REQUEST, errors.array().map(error => error.msg))
+                
+                next(new ErrorService(HTTP_BAD_REQUEST, errors.array().map(error => error.msg)))
             }
 
             next()

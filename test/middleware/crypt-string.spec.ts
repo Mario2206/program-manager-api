@@ -4,10 +4,10 @@ describe("CryptString", () => {
 
     describe("When a key name is passed for crypting the corresponding value",  () => {
 
-        it("should throw an error when the argument representing the key name is empty", async (done) => {
+        it("should throw an error when the argument is empty", async (done) => {
             const keyname = ""
 
-            const {request, response} = generateMockRequestResponse()
+            const [request, response] = generateMockRequestResponse()
             const next = jest.fn()
 
             try {
@@ -22,7 +22,7 @@ describe("CryptString", () => {
             const keyname = "test"
             const body = {  }
 
-            const {request, response} = generateMockRequestResponse({body})
+            const [request, response] = generateMockRequestResponse({body})
             const next = jest.fn()
 
             try {
@@ -38,7 +38,7 @@ describe("CryptString", () => {
             const valueToCrypt = "valueToCrypt"
             const body = {key : "valueToCrypt"}
 
-            const {request, response} = generateMockRequestResponse({body})
+            const [request, response] = generateMockRequestResponse({body})
             const next = jest.fn()
 
             try {
