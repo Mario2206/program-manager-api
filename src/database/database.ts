@@ -7,6 +7,10 @@ export default class Database {
         return createConnection()
     }
 
+    public static disconnect() : Promise<void> {
+        return getConnection().close()
+    }
+
     public static getManager() : EntityManager {
         return getManager()
     }
@@ -17,6 +21,10 @@ export default class Database {
 
     public static getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity> {
         return getRepository(entityClass)
+    }
+    
+    public static  clean(tableName : string) : Promise<void> {
+        return getConnection().query(`TRUNCATE TABLE "${tableName}"` )
     }
 
 }
