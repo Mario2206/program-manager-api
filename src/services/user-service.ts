@@ -63,20 +63,18 @@ export default class UserService {
         
         return new Promise ((resolve, reject) => {
 
-            if(!userId.username && !userId.mail) {
+            if(!('username' in userId) && !('mail' in userId)) {
                 reject(new ErrorService(HTTP_SERVER_ERROR, "Username or mail have to be informed"))
             }
         
             Database.getManager().findOne(User, userId)
             .then(async (user : User | undefined) => {
-                console.log(user);
                 
                 if(!user) {
                     return reject(new ErrorService(HTTP_BAD_REQUEST, BAD_IDENTIFICATION))
                 }
 
                 const check = await EncryptedString.compare(password, user.password)
-                // console.log(password, user.password);
                 
                 if(!check) {
                     return reject(new ErrorService(HTTP_BAD_REQUEST, BAD_PASS))

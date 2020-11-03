@@ -44,6 +44,12 @@ export default class EncryptedString {
         })
     }
 
+    /**
+     * For comparing an encrypt data with a no encrypt data
+     * 
+     * @param original 
+     * @param encryptedString 
+     */
     public static compare(original : string, encryptedString : string) : Promise<boolean> {
         return bcrypt.compare(original, encryptedString)
     }

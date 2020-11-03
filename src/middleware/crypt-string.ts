@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt"
 import { NextFunction } from "express"
 import { middleware } from "../abstract/middleware/type-middleware"
 import {Request, Response} from "express"
@@ -13,6 +12,11 @@ export default class CryptString {
         NO_EXISTENCE_OF_KEY : "The key passed doesn't exist in the request"
     }
 
+    /**
+     * Middleware for crypting value
+     * 
+     * @param keyName 
+     */
     public static cryptValue(keyName : string) : middleware {
         
         return async (req : Request, res : Response, next : NextFunction) => {

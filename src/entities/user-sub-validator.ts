@@ -9,6 +9,9 @@ export default class UserSubValidator implements IValidator{
         EMPTY_ERROR : "is empty"
     }
 
+    /**
+     * For getting userValidators
+     */
     public get validators () : ValidationChain[] {
         return [
             this.createStringValidator("firstname", {min : 1, max : 100}),
@@ -19,6 +22,12 @@ export default class UserSubValidator implements IValidator{
         ]
     }
 
+    /**
+     * For creating common string validators
+     * 
+     * @param keyname 
+     * @param length 
+     */
     private createStringValidator (keyname : string, length : {min : number, max : number}) {
         return check(keyname)
         .notEmpty()
