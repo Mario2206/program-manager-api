@@ -1,14 +1,18 @@
 import { IELitteralObject } from "../abstract/int-common"
 import {UserSchema} from "../abstract/schema-model"
-import { HTTP_BAD_REQUEST, HTTP_SERVER_ERROR } from "../constants/http"
-import { BAD_IDENTIFICATION, BAD_PASS } from "../constants/messages"
 import Database from "../database/database"
 import {User} from "../database/entity/user"
 import EncryptedString from "../entities/encrypted-string"
-import ErrorService from "../entities/error-service"
+
 
 
 export default class UserService {
+
+    public static errors = {
+        BAD_USERID : "Bad identification",
+        BAD_PASS : "Bad password",
+        ABSENCE_KEYS : "Username or mail have to be informed" 
+    }
 
     /**
      * For checking if the argument values are unique in the user table
@@ -41,7 +45,10 @@ export default class UserService {
      * @param providedData 
      * 
      */
-    public static register (providedData : UserSchema) : Promise<User> {
+    public static async register (providedData : UserSchema) : Promise<User> {
+        
+        const encryptPassword = new EncryptedString(providedData.password)
+        await encryptPassword.encrypt()
         
         const user = new User()
         
@@ -49,7 +56,7 @@ export default class UserService {
         user.firstname = providedData.firstname
         user.username = providedData.username
         user.mail = providedData.mail
-        user.password = providedData.password
+        user.password = encryptPassword.value
                 
         return Database.getManager().save(user)
     }
@@ -60,25 +67,31 @@ export default class UserService {
      * @param userId 
      * @param password 
      */
-    public static login (userId : {username? : string, mail? : string}, password : string) : Promise<User> {
+    public static login (userId : {username? : string, mail? : string, password : string}) : Promise<User> {
         
         return new Promise ((resolve, reject) => {
 
             if(!('username' in userId) && !('mail' in userId)) {
-                reject(new ErrorService(HTTP_SERVER_ERROR, "Username or mail have to be informed"))
+                reject(new Error(UserService.errors.ABSENCE_KEYS))
             }
-        
-            Database.getManager().findOne(User, userId)
+
+            const connectId = userId.username ? {username : userId.username} : {mail : userId.mail}
+            
+            console.log(connectId);
+            
+            Database.getManager().findOne(User, connectId)
             .then(async (user : User | undefined) => {
                 
+                
                 if(!user) {
-                    return reject(new ErrorService(HTTP_BAD_REQUEST, BAD_IDENTIFICATION))
+                    return reject(new Error(UserService.errors.BAD_USERID))
                 }
-
-                const check = await EncryptedString.compare(password, user.password)
+                
+                
+                const check = await EncryptedString.compare(userId.password, user.password)
                 
                 if(!check) {
-                    return reject(new ErrorService(HTTP_BAD_REQUEST, BAD_PASS))
+                    return reject(new Error(UserService.errors.BAD_PASS))
                 }
 
                 resolve(user)  

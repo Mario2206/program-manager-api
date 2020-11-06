@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt"
-import { HTTP_SERVER_ERROR } from "../constants/http"
-import ErrorService from "./error-service"
+
 
 export default class EncryptedString {
     
@@ -26,9 +25,8 @@ export default class EncryptedString {
     public encrypt () : Promise<string> {
 
         if(!this._content){ 
-            console.log("error");
             
-            throw new ErrorService(HTTP_SERVER_ERROR, "String content shouldn't be empty")
+            throw new Error( "String content shouldn't be empty")
         }
 
         return new Promise((resolve, reject)=> {

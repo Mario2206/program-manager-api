@@ -1,3 +1,5 @@
+import { HTTP_BAD_REQUEST } from "../../src/constants/http"
+import ErrorService from "../../src/entities/error-service"
 import PostProcessor from "../../src/middleware/post-processor"
 import { generateMockRequestResponse } from "../utils"
 
@@ -8,16 +10,15 @@ describe("PostProcessor::checkKeys", ()=> {
 
             const expectedKeys = ["name", "firstname", "mail"]
             const post = {name : "mario"}
-            const expectedMessage = "firstname, mail missing"
+            const missedKeys = ["firstname", "mail"]
+            const expectedMessage = PostProcessor.errors.missing_keys(missedKeys)
+            const expectedError = new ErrorService(HTTP_BAD_REQUEST, expectedMessage)
 
-            const [request, response] = generateMockRequestResponse({body : post})
-            const next = jest.fn()
-
-            try {
-                PostProcessor.checkKeys(expectedKeys)(request, response, next) 
-            } catch(e) {            
-                expect(e.message).toBe(expectedMessage)
-            }
+            const [ request, response, next ] = generateMockRequestResponse({body : post})
+            
+            PostProcessor.checkKeys(expectedKeys)(request, response, next) 
+            expect(next.getCall(0).args[0]).toEqual(expectedError)
+            
         })
 
         it("shouldn't throw an error when all wanted post keys are present", (done)=> {
@@ -25,15 +26,13 @@ describe("PostProcessor::checkKeys", ()=> {
             const expectedKeys = ["name", "firstname", "mail"]
             const post = {name : "mario", firstname : "mars", mail : "mail"}
 
-            const [request, response] = generateMockRequestResponse({body : post})
-            const next = jest.fn()
-
-            try {
-                PostProcessor.checkKeys(expectedKeys)(request, response, next) 
-                done()
-            } catch(e) {
-                expect(e).toBeNull()
-            }
+            const [ request, response, next ] = generateMockRequestResponse({body : post})
+    
+        
+            PostProcessor.checkKeys(expectedKeys)(request, response, next) 
+            expect(next.getCall(0).args[0]).toBeUndefined()
+            done()
+          
         })
     })
 
@@ -43,27 +42,27 @@ describe("PostProcessor::checkKeys", ()=> {
             const body = {name : "mario", firstname : "mars", mail : "mail", sup : "sup"}
             const filteredBody = {name : "mario", firstname : "mars", mail : "mail"}
     
-            const [request, response] = generateMockRequestResponse({body})
-            const next = jest.fn()
+            const [request, response, next ] = generateMockRequestResponse({body})
+            
     
             PostProcessor.filterKeys(expectedKeys)(request, response, next)
             
             expect(request.body).toEqual(filteredBody)
+            expect(next.called).toBeTruthy()
         })
         
         it("should throw an error when required keys are missing after filtering", () => {
             const expectedKeys = ["name", "firstname", "mail"]
             const body = { firstname : "mars", mail : "mail", sup : "sup"}
             const expectedErrorMessage = PostProcessor.errors.FILTER_KEYS_ERROR
+            const expectedError = new ErrorService(HTTP_BAD_REQUEST, expectedErrorMessage)
     
-            const [request, response] = generateMockRequestResponse({body})
-            const next = jest.fn()
+            const [ request, response, next ] = generateMockRequestResponse({body})
     
-            try {
-                PostProcessor.filterKeys(expectedKeys)(request, response, next)
-            } catch(e) {
-                expect(e.message).toBe(expectedErrorMessage)
-            }
+            
+            PostProcessor.filterKeys(expectedKeys)(request, response, next)
+            expect(next.getCall(0).args[0]).toEqual(expectedError)
+            
             
         })
     })

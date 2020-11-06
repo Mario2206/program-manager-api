@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import { IELitteralObject } from "../abstract/int-common";
 import {middleware} from "../abstract/middleware/type-middleware"
-import { HTTP_BAD_REQUEST, HTTP_SERVER_ERROR } from "../constants/http";
+import { HTTP_BAD_REQUEST } from "../constants/http";
 import ErrorService from "../entities/error-service";
 
 /**
@@ -11,7 +11,11 @@ import ErrorService from "../entities/error-service";
 export default class PostProcessor {
 
     public static errors = {
-        FILTER_KEYS_ERROR : "Please checking the post keys before filtering them"
+
+        FILTER_KEYS_ERROR : "All required keys aren't in the request",
+
+        missing_keys : (keys : string[]) : string => keys.join(", ") + " missing"
+
     }
     
     /**
@@ -29,8 +33,8 @@ export default class PostProcessor {
             const missedKeys = requiredKeys.filter((key)=>!postKeys.includes(key))
 
             if(missedKeys.length > 0) {
-                const errorMessage = missedKeys.join(", ") + " missing"
-                throw new ErrorService(HTTP_BAD_REQUEST, errorMessage )
+                const errorMessage = this.errors.missing_keys(missedKeys)
+                next ( new ErrorService(HTTP_BAD_REQUEST, errorMessage ) )
             }
             
             next()
@@ -53,7 +57,7 @@ export default class PostProcessor {
             .reduce((body : IELitteralObject, currentKey : string) => (body[currentKey] = req.body[currentKey], body), {})
             
             if(Object.keys(req.body).length !== requiredKeys.length) {
-                throw new ErrorService(HTTP_SERVER_ERROR, PostProcessor.errors.FILTER_KEYS_ERROR)
+                next ( new ErrorService(HTTP_BAD_REQUEST, PostProcessor.errors.FILTER_KEYS_ERROR) )
             }
 
             next()

@@ -1,9 +1,7 @@
-import { HTTP_BAD_REQUEST } from "../../src/constants/http"
 import { BAD_IDENTIFICATION, BAD_PASS } from "../../src/constants/messages"
 import Database from "../../src/database/database"
 import { User } from "../../src/database/entity/user"
 import EncryptedString from "../../src/entities/encrypted-string"
-import ErrorService from "../../src/entities/error-service"
 import UserService from "../../src/services/user-service"
 
 describe("User Service", () => {
@@ -88,9 +86,11 @@ describe("User Service", () => {
                 mail : "mail@mail.com",
                 password : "superPassword"
             }
-
+           
             await UserService.register(data)
-            const req = await Database.getManager().find<User>(User, data)
+            
+           
+            const req = await Database.getManager().find<User>(User, {username : data.username})
             const user = req[0]
 
             expect(req.length).toBe(1)
@@ -98,7 +98,8 @@ describe("User Service", () => {
             expect(user.lastname).toBe(data.lastname)
             expect(user.username).toBe(data.username)
             expect(user.mail).toBe(data.mail)
-            expect(user.password).toBe(data.password)
+            expect(user.password).not.toBe("")
+            expect(user.password).not.toBe(data.password)
             
         })
 
@@ -114,6 +115,7 @@ describe("User Service", () => {
             password : "superPassword",
             encryptPassword : ""
         }
+        let user : User;
 
         beforeAll(async ()=> {
             await Database.connect()
@@ -121,12 +123,8 @@ describe("User Service", () => {
 
         beforeEach( async () => {
             const data = {...commonData}
-            const encrypt  = new EncryptedString(data.password)
-            
-            await encrypt.encrypt()
-            data.password = encrypt.value
 
-            await UserService.register(data)
+            user = await UserService.register(data)
         })
 
         afterEach(async ()=> {
@@ -138,16 +136,16 @@ describe("User Service", () => {
         })
 
         it("should return user data when the user id is correct", async  () => {
-            const data = commonData
-            const userId = {username : data.username}
-            const password = data.password
+            
+            const userId = {username : user.username, password : commonData.password}
+            
             try {
 
-                const user  = await UserService.login(userId, password)
-                expect(user.firstname).toBe(data.firstname)
-                expect(user.lastname).toBe(data.lastname) 
-                expect(user.username).toBe(data.username) 
-                expect(user.mail).toBe(data.mail) 
+                const userConnected  = await UserService.login(userId)
+                expect(userConnected.firstname).toBe(commonData.firstname)
+                expect(userConnected.lastname).toBe(commonData.lastname) 
+                expect(userConnected.username).toBe(commonData.username) 
+                expect(userConnected.mail).toBe(commonData.mail) 
 
             } catch(e) {
                 expect(e).toBeNull()
@@ -155,13 +153,12 @@ describe("User Service", () => {
         })
 
         it("shouldn't return user data when the user id is uncorrect", async  () => {
-            const data = commonData
-            const userId = {username : "incorrect username"}
-            const password = data.password
-            const expectedError = new ErrorService(HTTP_BAD_REQUEST, BAD_IDENTIFICATION)
+            
+            const userId = {username : "incorrect username", password : user.password}
+            const expectedError = new Error( BAD_IDENTIFICATION)
             
             try {
-                await UserService.login(userId, password)
+                await UserService.login(userId)
                 expect(false).toBeTruthy()
             } catch(e) {
                 expect(e).toEqual(expectedError)
@@ -170,13 +167,12 @@ describe("User Service", () => {
         })
 
         it("shouldn't return user data when the password is uncorrect", async  () => {
-            const data = commonData
-            const userId = {username : data.username}
-            const password = "uncorrectPassword"
-            const expectedError = new ErrorService(HTTP_BAD_REQUEST, BAD_PASS)
+            
+            const userId = {username : user.username, password : "uncorrectPassword"}
+            const expectedError = new Error( BAD_PASS)
             
             try {
-                await UserService.login(userId, password)
+                await UserService.login(userId)
                 expect(false).toBeTruthy()
             } catch(e) {
                 expect(e).toEqual(expectedError)

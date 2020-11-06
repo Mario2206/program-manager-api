@@ -31,10 +31,10 @@ describe("Authentification entity", () => {
 
         it("should return a token with expiration Date", () => {
 
-            const date = "24h"
+            const date = "12h"
             const normalToken = new AuthToken(PRIVATE_KEY)
             const tokenWithPayload = new AuthToken(PRIVATE_KEY)
-            tokenWithPayload.setExpDate(date)
+            tokenWithPayload.setExpirationDate(date)
 
             tokenWithPayload.generate()    
             normalToken.generate()   
@@ -44,6 +44,33 @@ describe("Authentification entity", () => {
 
         })
 
+        it("shouldn't return a token with an empty private key", () => {
+                const EMPTY_KEY = ""
+                expect(()=>new AuthToken(EMPTY_KEY)).toThrowError(AuthToken.errors.CRYPT_KEY_EMPTY)
+        })
+
     })
 
+    describe("When comparing a authorization token", () => {
+
+        it("should return the payload when the token is correct", () => {
+            const expectedResult = {username : "Mardio"}
+            const token = new AuthToken(PRIVATE_KEY)
+            token.setCustomPayload(expectedResult)
+            token.generate()
+
+            const result = AuthToken.authorize(token.value, PRIVATE_KEY)
+            
+            expect(result.username).toBe(expectedResult.username)
+        })
+        it("should throw an error if the token has expired", () => {
+            const token = new AuthToken(PRIVATE_KEY)
+            token.setExpirationDate("0")
+            token.generate()
+
+            
+            expect(()=>AuthToken.authorize(token.value, PRIVATE_KEY)).toThrow(Error)
+        })
+
+    })
 })

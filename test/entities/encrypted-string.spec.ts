@@ -1,5 +1,5 @@
 import EncryptedString from "../../src/entities/encrypted-string"
-import ErrorService from "../../src/entities/error-service"
+
 
 describe('CryptedString entity', () => {
 
@@ -24,7 +24,7 @@ describe('CryptedString entity', () => {
             const cryptedText = new EncryptedString(text)
 
            
-            await expect(()=>cryptedText.encrypt()).toThrow(ErrorService) 
+            await expect(()=>cryptedText.encrypt()).toThrow(Error) 
             
         })
 
