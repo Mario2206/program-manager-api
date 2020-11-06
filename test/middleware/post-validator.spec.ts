@@ -3,10 +3,11 @@ import PostValidator from "../../src/middleware/post-validator"
 import { generateMockRequestResponse } from "../utils"
 import sinon from "sinon"
 import UserSubValidator from "../../src/entities/validators/user-sub-validator"
+import UserLoginValidator from "../../src/entities/validators/user-login-validator"
 
 describe("PostValidator", ()=> {
     
-    describe("When recieve an user sub validator", ()=> {
+    describe("When recieves an user sub validator", ()=> {
 
         it("should throw an error when some validations are uncorrect",async  () => {
 
@@ -49,6 +50,42 @@ describe("PostValidator", ()=> {
 
             expect(next.getCall(0).args[0]).toBeUndefined()
         })
+
+    })
+
+    describe("When it receives an user login validator", () => {
+
+        it("should throw an error when some validations are uncorrect",async  () => {
+
+            const expectedErrors = [
+                UserLoginValidator.errors.EMPTY_ERROR
+            ]
+            const reqBodyForSub = {
+                username : "username",
+            }
+            const [request, response, next] = generateMockRequestResponse({body : reqBodyForSub})
+
+            const middleware = PostValidator.validateRequest(new UserLoginValidator())
+            
+            await middleware(request, response, next)
+            expect(next.getCall(0).args[0].message).toEqual(expect.arrayContaining(expectedErrors))
+            
+        }) 
+
+        it("shouldn't throw an error when all validations are correct",async  () => {
+
+            const reqBodyForSub = {
+                username : "username",
+                password : "password"
+            }
+            const [request, response, next] = generateMockRequestResponse({body : reqBodyForSub})
+
+            const middleware = PostValidator.validateRequest(new UserLoginValidator())
+            
+            await middleware(request, response, next)
+            expect(next.getCall(0).args[0]).toBeUndefined()
+            
+        }) 
 
     })
     

@@ -76,9 +76,7 @@ export default class UserService {
             }
 
             const connectId = userId.username ? {username : userId.username} : {mail : userId.mail}
-            
-            console.log(connectId);
-            
+                        
             Database.getManager().findOne(User, connectId)
             .then(async (user : User | undefined) => {
                 

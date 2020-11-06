@@ -161,6 +161,8 @@ describe("User Service", () => {
                 await UserService.login(userId)
                 expect(false).toBeTruthy()
             } catch(e) {
+                console.dir(e);
+                
                 expect(e).toEqual(expectedError)
             }
             
@@ -169,7 +171,7 @@ describe("User Service", () => {
         it("shouldn't return user data when the password is uncorrect", async  () => {
             
             const userId = {username : user.username, password : "uncorrectPassword"}
-            const expectedError = new Error( BAD_PASS)
+            const expectedError = new Error( UserService.errors.BAD_PASS)
             
             try {
                 await UserService.login(userId)

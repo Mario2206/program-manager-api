@@ -1,6 +1,7 @@
 import {Router} from "express"
 import { LOG_ROUTE, SUB_ROUTE } from "../constants/routes"
 import UserController from "../controller/user-controller"
+import UserLoginValidator from "../entities/validators/user-login-validator"
 import UserSubValidator from "../entities/validators/user-sub-validator"
 import PostProcessor from "../middleware/post-processor"
 import PostValidator from "../middleware/post-validator"
@@ -17,11 +18,14 @@ router.post(SUB_ROUTE, [
     UserController.subscribeUser
 ])
 
-// router.post(LOG_ROUTE, [
-//     PostProcessor.checkKeys(requiredKeysForLogin),
-//     PostProcessor.filterKeys(requiredKeysForLogin),
-//     PostValidator.validateRequest()
-// ])
+router.post(LOG_ROUTE, [
+    PostProcessor.checkKeys(requiredKeysForLogin),
+    PostProcessor.filterKeys(requiredKeysForLogin),
+    PostValidator.validateRequest(new UserLoginValidator()),
+    UserController.login
+])
+
+
 
 
 export default router

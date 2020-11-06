@@ -67,6 +67,14 @@ describe("user route", () => {
 
     describe("Login route", ()=> {
         
+        const commonData = {
+            username : "Mirtille78",
+            password : "superPassword",
+            firstname : "firstname", 
+            lastname : "lastname",
+            mail : "mail@mail.com"
+        }
+
         beforeAll(async ()=>{
             server = await app()
         })
@@ -76,24 +84,33 @@ describe("user route", () => {
             server.close(done)
         })
 
+        beforeEach((done) => {
+            request(server)
+            .post(USER_ROUTE + SUB_ROUTE)
+            .send(commonData)
+            .end(()=> done())
+        })
+
         afterEach(async ()=> {
             await Database.clean("user")
         })
         
-        it("should return positive response when the request body contains all required values for connection", () => {
+        it("should return positive response when the request body contains all required values for connection", (done) => {
 
             const expectedResult = HTTP_SUCCESS
-            const body = {
-                lastname : "Mars",
-                username : "Mirtille78",
-                mail : "mail@mail.com",
-                password : "superPassword"
-            }
+            const body = commonData
             
             request(server)
             .post(USER_ROUTE + LOG_ROUTE)
             .send(body)
             .expect(expectedResult)
+            .end((err, res)=> {
+
+                expect(err).toBeNull()
+                expect(res.header.authorization).not.toBe("")
+                done()
+                
+            })
 
         })
 
