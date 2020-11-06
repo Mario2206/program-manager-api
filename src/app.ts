@@ -9,6 +9,7 @@ import { Server } from "http";
 
 
 
+
 async function app () : Promise<Server> {
 
     await Database.connect()
@@ -19,14 +20,14 @@ async function app () : Promise<Server> {
 
         app.use(bodyparser.json())
 
+        
         app.use(USER_ROUTE, userRoute)
 
         app.use(errorHandler)
 
-        const server : Server = app.listen(process.env.PORT, () => {
-
-            console.log("Server open on " + process.env.PORT);
+        const server : Server = app.listen(process.env.PORT, async  () => {
             
+            console.log("Server open on " + process.env.PORT);
 
             resolve(server)
         
