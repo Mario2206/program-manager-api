@@ -1,8 +1,8 @@
 import { Response, Request, NextFunction } from "express";
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SERVER_ERROR, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
-import AuthToken from "../entities/auth-token";
-import ErrorService from "../entities/error-service";
+import AuthToken from "../core/authentification/auth-token";
+import ErrorService from "../core/error/error-service";
 import UserService from "../services/user-service";
 
 export default class UserController {
@@ -17,19 +17,6 @@ export default class UserController {
     public static async subscribeUser(req : Request, res : Response, next : NextFunction) : Promise<void> {
 
         try {
-
-            const uniqueMail = await UserService.checkUniqueness({mail : req.body.mail})
-            const uniqueUsername = await UserService.checkUniqueness({username : req.body.username})
-
-            if(!uniqueMail || !uniqueUsername) {
-                const error = new ErrorService(
-                    HTTP_BAD_REQUEST, 
-                    !uniqueMail ? UserController.errors.MAIL : UserController.errors.USERNAME
-                    )
-                    
-                return next(error)
-            }
-            
             
             await UserService.register(req.body)
            

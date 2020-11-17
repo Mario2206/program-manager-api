@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import {validationResult} from "express-validator"
 import { ValidationChain } from "express-validator/src/chain";
-import IValidator from "../abstract/entities/int-validator";
-import { middleware } from "../abstract/middleware/type-middleware";
-import { HTTP_BAD_REQUEST } from "../constants/http";
-import ErrorService from "../entities/error-service";
+import IValidator from "../../abstract/entities/int-validator";
+import { middleware } from "../../abstract/middleware/type-middleware";
+import { HTTP_BAD_REQUEST } from "../../constants/http";
+import ErrorService from "../error/error-service";
+
 
 /**
  * For managing validators and the potential errors

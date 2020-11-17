@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-import { IELitteralObject } from "../abstract/int-common"
+import { IELitteralObject } from "../../abstract/int-common"
 
 export default class AuthToken {
 

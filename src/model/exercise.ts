@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import Session from "../entity/session"
+import Session from "./session"
 
 @Entity()
 export default class Exercise {

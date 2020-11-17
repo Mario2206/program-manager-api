@@ -1,6 +1,6 @@
 import { HTTP_BAD_REQUEST } from "../../src/constants/http"
-import ErrorService from "../../src/entities/error-service"
-import PostProcessor from "../../src/middleware/post-processor"
+import ErrorService from "../../src/core/error/error-service"
+import PostProcessor from "../../src/core/middleware/post-processor"
 import { generateMockRequestResponse } from "../utils"
 
 describe("PostProcessor::checkKeys", ()=> {

@@ -1,8 +1,8 @@
 import { NextFunction, Response, Request } from "express";
-import { IELitteralObject } from "../abstract/int-common";
-import {middleware} from "../abstract/middleware/type-middleware"
-import { HTTP_BAD_REQUEST } from "../constants/http";
-import ErrorService from "../entities/error-service";
+import { IELitteralObject } from "../../abstract/int-common";
+import {middleware} from "../../abstract/middleware/type-middleware"
+import { HTTP_BAD_REQUEST } from "../../constants/http";
+import ErrorService from "../error/error-service";
 
 /**
  * Class for processing the body of a request

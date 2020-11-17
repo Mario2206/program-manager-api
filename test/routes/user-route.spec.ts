@@ -3,7 +3,7 @@ import request  from "supertest"
 import app from "../../src/app"
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../../src/constants/http"
 import { LOG_ROUTE, SUB_ROUTE, USER_ROUTE } from "../../src/constants/routes"
-import Database from "../../src/database/database"
+import Database from "../../src/core/database/database"
 
 
 

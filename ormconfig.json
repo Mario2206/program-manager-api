@@ -10,10 +10,10 @@
       "synchronize": true,
       "logging": false,
       "entities": [
-         "src/database/entity/**/*.ts"
+         "src/model/**/*.ts"
       ],
       "migrations": [
-         "src/database/migration/**/*.ts"
+         "database/migration/**/*.ts"
       ],
       "subscribers": [
          "src/database/subscriber/**/*.ts"
@@ -30,10 +30,10 @@
       "synchronize": true,
       "logging": false,
       "entities": [
-         "src/database/entity/**/*.ts"
+         "src/model/**/*.ts"
       ],
       "migrations": [
-         "src/database/migration/**/*.ts"
+         "database/migration/**/*.ts"
       ],
       "subscribers": [
          "src/database/subscriber/**/*.ts"

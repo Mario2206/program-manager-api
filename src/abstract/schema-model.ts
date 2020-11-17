@@ -11,3 +11,10 @@ export type UserSchema = {
     mail : string,
     password : string,
 }
+
+export type ExerciseSchema = {
+    name : string,
+    type : string,
+    image_path : string,
+    description : string
+}

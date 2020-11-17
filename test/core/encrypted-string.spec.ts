@@ -1,4 +1,4 @@
-import EncryptedString from "../../src/entities/encrypted-string"
+import EncryptedString from "../../src/core/encrypt/encrypted-string"
 
 
 describe('CryptedString entity', () => {

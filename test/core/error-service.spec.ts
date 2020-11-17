@@ -1,5 +1,5 @@
 
-import ErrorService from "../../src/entities/error-service"
+import ErrorService from "../../src/core/error/error-service"
 
 describe("ErrorService", ()=> {
     it("should be catched if it's thrown, with correct status and error message", ()=> {

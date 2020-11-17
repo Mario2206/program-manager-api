@@ -1,8 +1,8 @@
-import { IELitteralObject } from "../abstract/int-common"
 import {UserSchema} from "../abstract/schema-model"
-import Database from "../database/database"
-import {User} from "../database/entity/user"
-import EncryptedString from "../entities/encrypted-string"
+import Database from "../core/database/database"
+import {User} from "../model/user"
+import EncryptedString from "../core/encrypt/encrypted-string"
+import {  validateOrReject } from "class-validator"
 
 
 
@@ -14,35 +14,13 @@ export default class UserService {
         ABSENCE_KEYS : "Username or mail have to be informed" 
     }
 
-    /**
-     * For checking if the argument values are unique in the user table
-     * 
-     * @param valuesToCheck 
-     * 
-     * 
-     */
-    public static checkUniqueness(valuesToCheck : IELitteralObject) : Promise<boolean> {
-
-        return new Promise((resolve, reject) => {
-
-            Database.getManager().findOne(User, valuesToCheck)
-            .then((result : User | undefined) => {
-                    
-                resolve(result === undefined)
-
-            })
-            .catch((e) => {
-
-                reject(e)
-
-            })
-        })
-    }
     
     /**
      * For registering a new user in the database
      * 
      * @param providedData 
+     * 
+     * @return Promise<User>
      * 
      */
     public static async register (providedData : UserSchema) : Promise<User> {
@@ -57,7 +35,9 @@ export default class UserService {
         user.username = providedData.username
         user.mail = providedData.mail
         user.password = encryptPassword.value
-                
+
+        await validateOrReject(user)
+        
         return Database.getManager().save(user)
     }
 

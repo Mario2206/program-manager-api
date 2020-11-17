@@ -26,7 +26,7 @@ export default class Database {
     }
     
     public static  clean(tableName : string) : Promise<void> {
-        return getConnection(Database.connectName).query(`TRUNCATE TABLE "${tableName}"` )
+        return getConnection(Database.connectName).query(`TRUNCATE TABLE "${tableName}" CASCADE` )
     }
 
 }

@@ -1,8 +1,8 @@
 import { HTTP_BAD_REQUEST, HTTP_SERVER_ERROR } from "../../src/constants/http"
 import { USER_CREATED } from "../../src/constants/messages"
 import UserController from "../../src/controller/user-controller"
-import Database from "../../src/database/database"
-import ErrorService from "../../src/entities/error-service"
+import Database from "../../src/core/database/database"
+import ErrorService from "../../src/core/error/error-service"
 import { generateMockRequestResponse } from "../utils"
 import sinon from "sinon"
 

@@ -1,67 +1,13 @@
-import { BAD_IDENTIFICATION, BAD_PASS } from "../../src/constants/messages"
-import Database from "../../src/database/database"
-import { User } from "../../src/database/entity/user"
-import EncryptedString from "../../src/entities/encrypted-string"
+import { BAD_IDENTIFICATION } from "../../src/constants/messages"
+import Database from "../../src/core/database/database"
+import { User } from "../../src/model/user"
 import UserService from "../../src/services/user-service"
 
 describe("User Service", () => {
 
-    describe ("When checking uniqueness", () => {
+
         
-        beforeAll(async ()=> {
-            await Database.connect()
-        })
-
-        afterEach(async ()=> {
-            await Database.clean("user")
-        })
-
-        afterAll(async ()=> {
-            await Database.disconnect()
-        })
-
-        it("should return false when the key value already exist in the table", async () => {
-
-            const data = {
-                firstname : "Mario",
-                lastname : "Mars",
-                username : "Mirtille78",
-                mail : "mail@mail.com",
-                password : "superPassword"
-            }
-
-            const user = new User()
-            user.firstname = data.firstname
-            user.lastname = data.lastname
-            user.username = data.username
-            user.mail = data.mail
-            user.password = data.password
-
-            
-            await Database.getManager().save(user)
-            const test = await UserService.checkUniqueness({mail : data.mail})
-
-            expect(test).toBeFalsy()
-
-        })
-
-        it("should return true when the key value doesn't exist in the table", async () => {
-
-            const data = {
-                firstname : "Mario",
-                lastname : "Mars",
-                username : "Mirtille78",
-                mail : "mail@mail.com",
-                password : "superPassword"
-            }
-
-            const test = await UserService.checkUniqueness({mail : data.mail})
-
-            expect(test).toBeTruthy()
-
-        })
-
-    })
+        
     describe("When registering", () => {
 
         beforeAll(async ()=> {
@@ -76,7 +22,27 @@ describe("User Service", () => {
             await Database.disconnect()
         })
 
-        
+        it("shouldn't register the new User in database if he is already exist", async () => {
+            const data = {
+                firstname : "Mario",
+                lastname : "Mars",
+                username : "Mirtille78",
+                mail : "mail@mail.com",
+                password : "superPassword"
+            }
+
+            const user = new User()
+            user.firstname = data.firstname
+            user.lastname = data.lastname
+            user.username = data.username
+            user.mail = data.mail
+            user.password = data.password
+            
+            await Database.getManager().save(user)
+           
+            await expect(UserService.register(data)).rejects.toThrow()
+
+        })
 
         it("should register the new User in database if  provided data is correct", async () => {
             const data = {
