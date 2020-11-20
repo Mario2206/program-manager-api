@@ -16,7 +16,7 @@ export default class ExerciseService {
         exercise.type = type 
         exercise.image_path = image_path
         exercise.description = description
-
+        
         await validateOrReject(exercise)
 
         return Database.getManager().save(exercise)

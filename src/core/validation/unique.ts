@@ -10,8 +10,11 @@ export function Unique( validationOptions?: ValidationOptions) {
       constraints: [],
       options: (()=> (validationOptions?.message ? validationOptions :  {...validationOptions, message : propertyName + " value in " + object.constructor.name + " must be unique in the table" }))(),
       validator: {
-        async validate(value: any, args: ValidationArguments) {     
+        async validate(value: any, args: ValidationArguments) {  
+             
             const entity = await Database.getManager().findOne(object.constructor.name, {[propertyName] : value} )     
+    
+            
             return entity ? false : true
         },
       },

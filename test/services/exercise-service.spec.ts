@@ -12,16 +12,16 @@ describe("Exercise service", () => {
     }
     describe("When the exercise must be created", () => {
 
-        beforeAll(async ()=> {
-            await Database.connect()
+        beforeAll(()=> {
+            return  Database.connect()
         })
 
-        beforeEach(async ()=> {
-            await Database.clean("exercise")
+        beforeEach(()=> {
+            return Database.clean("exercise")
         })
 
-        afterAll(async ()=> {
-            await Database.disconnect()
+        afterAll(()=> {
+            return Database.disconnect()
         })
 
 

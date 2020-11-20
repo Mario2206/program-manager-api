@@ -7,23 +7,29 @@ import Database from "../../src/core/database/database"
 
 
 
+/**
+ * @group user
+ */
 describe("user route", () => {
     
     let server : Server;
 
     describe("Subscribe route", () => {
         
-        beforeAll(async ()=>{
-            server = await app()
+        beforeAll(()=>{
+            return app().then((appEntity) => server = appEntity)
         })
 
-        afterAll(async (done)=> {
-            await Database.disconnect()
-            server.close(done)
+        afterAll( (done)=> {
+                 Database.disconnect()
+                 .then (()=> {
+                     server.close(done)
+                 })
+                
         })
-
-        afterEach(async ()=> {
-            await Database.clean("user")
+        
+        afterEach(()=> {
+            return Database.clean("user")
         })
 
         it("should send a positive response when the body request is correct",  () => {
@@ -32,8 +38,8 @@ describe("user route", () => {
             const body = {
                 firstname : "Mario",
                 lastname : "Mars",
-                username : "Mirtille78",
-                mail : "mail@mail.com",
+                username : "Mirtille7875",
+                mail : "mail@maiel.com",
                 password : "superPassword"
             }
             
@@ -49,9 +55,10 @@ describe("user route", () => {
 
             const expectedResult = HTTP_BAD_REQUEST
             const body = {
+                firstname : "Mario",
                 lastname : "Mars",
-                username : "Mirtille78",
-                mail : "mail@mail.com",
+                username : "Mirtille7875",
+                mail : "mail@maiel.com",
                 password : "superPassword"
             }
             
@@ -67,28 +74,34 @@ describe("user route", () => {
 
     describe("Login route", ()=> {
         
+        let server : Server;
         const commonData = {
-            username : "Mirtille78",
+            username : "Mirtillze78",
             password : "superPassword",
             firstname : "firstname", 
             lastname : "lastname",
-            mail : "mail@mail.com"
+            mail : "maizl@mail.com"
         }
 
-        beforeAll(async ()=>{
-            server = await app()
+        beforeAll(()=>{
+            return app().then((appEntity) => server = appEntity)
         })
 
-        afterAll(async (done)=> {
-            await Database.disconnect()
-            server.close(done)
-        })
+        afterAll( (done)=> {
+            Database.disconnect()
+            .then (()=> {
+                server.close(done)
+            })
+           
+       })
+  
 
         beforeEach((done) => {
-            request(server)
+            return request(server)
             .post(USER_ROUTE + SUB_ROUTE)
             .send(commonData)
-            .end(()=> done())
+            .end(()=>done())
+            
         })
 
         afterEach(async ()=> {

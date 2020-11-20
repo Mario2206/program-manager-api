@@ -1,19 +1,19 @@
-import IEErrorService from "../../abstract/entities/int-error-service"
+import IEErrorService, { ErrorDetail } from "../../abstract/entities/interface-error"
 
-export default class ErrorService<T = string> implements IEErrorService<T>  {
+export default class ErrorService implements IEErrorService  {
 
     /*
         HTTP STATUS
     */
     protected _status : number
-    protected _message : T
+    protected _message : ErrorDetail | ErrorDetail[]
 
-    constructor(status : number, message : T) {
+    constructor(status : number, message : ErrorDetail | ErrorDetail[]) {
         this._status = status
         this._message = message
     }   
 
-    public get message() : T{
+    public get message() : ErrorDetail | ErrorDetail[]{
         return this._message
     }
 

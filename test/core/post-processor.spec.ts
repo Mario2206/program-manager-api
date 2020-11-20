@@ -1,7 +1,9 @@
 import { HTTP_BAD_REQUEST } from "../../src/constants/http"
+import { MISSING_KEYS } from "../../src/constants/types-error"
+import ErrorDetail from "../../src/core/error/error-detail"
 import ErrorService from "../../src/core/error/error-service"
 import PostProcessor from "../../src/core/middleware/post-processor"
-import { generateMockRequestResponse } from "../utils"
+import { generateMockRequestResponse } from "../utils/utils"
 
 describe("PostProcessor::checkKeys", ()=> {
 
@@ -12,7 +14,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const post = {name : "mario"}
             const missedKeys = ["firstname", "mail"]
             const expectedMessage = PostProcessor.errors.missing_keys(missedKeys)
-            const expectedError = new ErrorService(HTTP_BAD_REQUEST, expectedMessage)
+            const expectedError = new ErrorService(HTTP_BAD_REQUEST, new ErrorDetail(MISSING_KEYS, expectedMessage))
 
             const [ request, response, next ] = generateMockRequestResponse({body : post})
             
@@ -55,7 +57,7 @@ describe("PostProcessor::checkKeys", ()=> {
             const expectedKeys = ["name", "firstname", "mail"]
             const body = { firstname : "mars", mail : "mail", sup : "sup"}
             const expectedErrorMessage = PostProcessor.errors.FILTER_KEYS_ERROR
-            const expectedError = new ErrorService(HTTP_BAD_REQUEST, expectedErrorMessage)
+            const expectedError = new ErrorService(HTTP_BAD_REQUEST, new ErrorDetail( MISSING_KEYS ,expectedErrorMessage ))
     
             const [ request, response, next ] = generateMockRequestResponse({body})
     

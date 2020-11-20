@@ -2,6 +2,8 @@ import { NextFunction, Response, Request } from "express";
 import { IELitteralObject } from "../../abstract/int-common";
 import {middleware} from "../../abstract/middleware/type-middleware"
 import { HTTP_BAD_REQUEST } from "../../constants/http";
+import { MISSING_KEYS } from "../../constants/types-error";
+import ErrorDetail from "../error/error-detail";
 import ErrorService from "../error/error-service";
 
 /**
@@ -33,7 +35,7 @@ export default class PostProcessor {
             const missedKeys = requiredKeys.filter((key)=>!postKeys.includes(key))
 
             if(missedKeys.length > 0) {
-                const errorMessage = this.errors.missing_keys(missedKeys)
+                const errorMessage = new ErrorDetail( MISSING_KEYS ,this.errors.missing_keys(missedKeys))
                 next ( new ErrorService(HTTP_BAD_REQUEST, errorMessage ) )
             }
             
@@ -57,7 +59,8 @@ export default class PostProcessor {
             .reduce((body : IELitteralObject, currentKey : string) => (body[currentKey] = req.body[currentKey], body), {})
             
             if(Object.keys(req.body).length !== requiredKeys.length) {
-                next ( new ErrorService(HTTP_BAD_REQUEST, PostProcessor.errors.FILTER_KEYS_ERROR) )
+                const error = new ErrorDetail(MISSING_KEYS, PostProcessor.errors.FILTER_KEYS_ERROR)
+                next ( new ErrorService(HTTP_BAD_REQUEST, error) )
             }
 
             next()

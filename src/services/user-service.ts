@@ -3,6 +3,11 @@ import Database from "../core/database/database"
 import {User} from "../model/user"
 import EncryptedString from "../core/encrypt/encrypted-string"
 import {  validateOrReject } from "class-validator"
+import customValidate from "../core/validation/validate"
+import ErrorService from "../core/error/error-service"
+import { HTTP_BAD_REQUEST } from "../constants/http"
+import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
+import ErrorDetail from "../core/error/error-detail"
 
 
 
@@ -35,8 +40,9 @@ export default class UserService {
         user.username = providedData.username
         user.mail = providedData.mail
         user.password = encryptPassword.value
-
-        await validateOrReject(user)
+        
+        await customValidate(user)
+        
         
         return Database.getManager().save(user)
     }
@@ -52,7 +58,7 @@ export default class UserService {
         return new Promise ((resolve, reject) => {
 
             if(!('username' in userId) && !('mail' in userId)) {
-                reject(new Error(UserService.errors.ABSENCE_KEYS))
+                reject(new ErrorDetail(BAD_KEYS, "Username or mail key missing"))
             }
 
             const connectId = userId.username ? {username : userId.username} : {mail : userId.mail}
@@ -62,14 +68,14 @@ export default class UserService {
                 
                 
                 if(!user) {
-                    return reject(new Error(UserService.errors.BAD_USERID))
+                    return reject(new ErrorDetail(BAD_AUTH, "User id is erroned"))
                 }
                 
                 
                 const check = await EncryptedString.compare(userId.password, user.password)
                 
                 if(!check) {
-                    return reject(new Error(UserService.errors.BAD_PASS))
+                    return reject(new ErrorDetail( BAD_AUTH,"Password is uncorrect"))
                 }
 
                 resolve(user)  

@@ -3,7 +3,6 @@ import {Length, IsEmail} from "class-validator"
 import { Unique } from "../core/validation/unique";
 
 @Entity()
-// @Unique(["mail", "username"])
 export class User {
 
     @PrimaryGeneratedColumn()

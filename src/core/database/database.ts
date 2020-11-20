@@ -13,7 +13,7 @@ export default class Database {
         return getConnection(Database.connectName).close()
     }
 
-    public static getManager() : EntityManager {
+    public static getManager() : EntityManager{
         return getManager(Database.connectName)
     }
 
@@ -26,7 +26,7 @@ export default class Database {
     }
     
     public static  clean(tableName : string) : Promise<void> {
-        return getConnection(Database.connectName).query(`TRUNCATE TABLE "${tableName}" CASCADE` )
+        return getConnection(Database.connectName).query(`DELETE  FROM "${tableName}" ` )
     }
 
 }

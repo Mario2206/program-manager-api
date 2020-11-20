@@ -1,28 +1,41 @@
-import { BAD_IDENTIFICATION } from "../../src/constants/messages"
+
+import { BAD_AUTH, BAD_VALIDATION } from "../../src/constants/types-error"
 import Database from "../../src/core/database/database"
+
+import ErrorDetail from "../../src/core/error/error-detail"
 import { User } from "../../src/model/user"
 import UserService from "../../src/services/user-service"
 
+import MockDatabase, { MockEntityManager } from "../utils/mock-database"
+
+
+/**
+ * @group user
+ */
 describe("User Service", () => {
-
-
-        
         
     describe("When registering", () => {
 
-        beforeAll(async ()=> {
-            await Database.connect()
+        let db : any;
+        let fakeEntityManager : any;
+
+        beforeEach(()=> {
+             fakeEntityManager = MockEntityManager.create()
+             db = new MockDatabase(fakeEntityManager)
         })
 
-        afterEach(async ()=> {
-            await Database.clean("user")
+        afterEach(()=> {
+            db.close()
         })
 
-        afterAll(async ()=> {
-            await Database.disconnect()
-        })
+        
 
         it("shouldn't register the new User in database if he is already exist", async () => {
+
+            
+            fakeEntityManager.findOne.resolves(new User())
+            
+
             const data = {
                 firstname : "Mario",
                 lastname : "Mars",
@@ -30,6 +43,7 @@ describe("User Service", () => {
                 mail : "mail@mail.com",
                 password : "superPassword"
             }
+            const errors = [new ErrorDetail(BAD_VALIDATION,"Username already taken" ), new ErrorDetail(BAD_VALIDATION,"Username already taken" )]
 
             const user = new User()
             user.firstname = data.firstname
@@ -38,13 +52,13 @@ describe("User Service", () => {
             user.mail = data.mail
             user.password = data.password
             
-            await Database.getManager().save(user)
            
-            await expect(UserService.register(data)).rejects.toThrow()
+            await expect(UserService.register(data)).rejects.toEqual(expect.arrayContaining(errors))
 
         })
 
         it("should register the new User in database if  provided data is correct", async () => {
+
             const data = {
                 firstname : "Mario",
                 lastname : "Mars",
@@ -52,14 +66,14 @@ describe("User Service", () => {
                 mail : "mail@mail.com",
                 password : "superPassword"
             }
-           
-            await UserService.register(data)
-            
-           
-            const req = await Database.getManager().find<User>(User, {username : data.username})
-            const user = req[0]
 
-            expect(req.length).toBe(1)
+            fakeEntityManager.find.resolves()
+            fakeEntityManager.save.resolvesArg(0)
+
+           
+            const user =await UserService.register(data)
+        
+
             expect(user.firstname).toBe(data.firstname)
             expect(user.lastname).toBe(data.lastname)
             expect(user.username).toBe(data.username)
@@ -79,34 +93,32 @@ describe("User Service", () => {
             username : "Mirtille78",
             mail : "mail@mail.com",
             password : "superPassword",
-            encryptPassword : ""
         }
         let user : User;
+       
+        let db : any;
+        let fakeEntityManager : any;
 
-        beforeAll(async ()=> {
-            await Database.connect()
+        beforeEach(async ()=> {
+             fakeEntityManager = MockEntityManager.create()
+             fakeEntityManager.save.resolvesArg(0)
+             db = new MockDatabase(fakeEntityManager)
+             user = await UserService.register(commonData)
         })
 
-        beforeEach( async () => {
-            const data = {...commonData}
-
-            user = await UserService.register(data)
+        afterEach(()=> {
+            db.close()
         })
 
-        afterEach(async ()=> {
-            await Database.clean("user")
-        })
-
-        afterAll(async ()=> {
-            await Database.disconnect()
-        })
 
         it("should return user data when the user id is correct", async  () => {
+            
+            fakeEntityManager.findOne.resolves(user)
             
             const userId = {username : user.username, password : commonData.password}
             
             try {
-
+                
                 const userConnected  = await UserService.login(userId)
                 expect(userConnected.firstname).toBe(commonData.firstname)
                 expect(userConnected.lastname).toBe(commonData.lastname) 
@@ -118,26 +130,28 @@ describe("User Service", () => {
             }
         })
 
-        it("shouldn't return user data when the user id is uncorrect", async  () => {
-            
+        test("shouldn't return user data when the user id is uncorrect", async  () => {
+
+            fakeEntityManager.findOne.resolves()
+
             const userId = {username : "incorrect username", password : user.password}
-            const expectedError = new Error( BAD_IDENTIFICATION)
+            const expectedError = new ErrorDetail( BAD_AUTH, "User id is erroned")
             
             try {
                 await UserService.login(userId)
                 expect(false).toBeTruthy()
-            } catch(e) {
-                console.dir(e);
-                
+            } catch(e) {                
                 expect(e).toEqual(expectedError)
             }
             
         })
 
-        it("shouldn't return user data when the password is uncorrect", async  () => {
+        test("shouldn't return user data when the password is uncorrect", async  () => {
+
+            fakeEntityManager.findOne.resolves(user)
             
             const userId = {username : user.username, password : "uncorrectPassword"}
-            const expectedError = new Error( UserService.errors.BAD_PASS)
+            const expectedError = new ErrorDetail( BAD_AUTH, "Password is uncorrect")
             
             try {
                 await UserService.login(userId)

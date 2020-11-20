@@ -8,35 +8,18 @@ import UserService from "../services/user-service";
 
 export default class UserController {
 
-    public static errors = {
-        SUB : "Error with subscription",
-        MAIL : "Mail already exist",
-        USERNAME : "Username already exist",
-        BAD_LOGIN : "Vos identifiants sont incorrects"
-    }
 
     public static async subscribeUser(req : Request, res : Response, next : NextFunction) : Promise<void> {
 
         try {
             
             await UserService.register(req.body)
-           
-            
+  
             res.status(HTTP_CREATED).json(USER_CREATED)
 
         }catch(e) {   
-
-            const error = e[0].constraints || ""
-
             
-            if(error &&  e[0] instanceof ValidationError) {
-                console.log(error);
-                
-                return next(new ErrorService(HTTP_BAD_REQUEST, error))
-            }
-              console.log("eererer");
-                     
-            next(new ErrorService(HTTP_SERVER_ERROR, UserController.errors.SUB))
+            next(e instanceof Error ? e : new ErrorService(HTTP_BAD_REQUEST, e))
             
         }
     } 
@@ -48,14 +31,15 @@ export default class UserController {
             await UserService.login(req.body)
                 
             const key = process.env.PRIVATE_KEY_FOR_TOKEN ?? ""
+            
             const token = new AuthToken(key)
             token.setExpirationDate('24h')
             token.generate()
-                             
+            
             res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + token.value).json("Connected")
             
-        } catch (e) {
-            next(new ErrorService(HTTP_BAD_REQUEST, e.message))
+        } catch (e) {            
+            next(e instanceof Error ? e : new ErrorService(HTTP_BAD_REQUEST, e))
         }
         
     }

@@ -1,7 +1,9 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  verbose: true,
+  verbose: false,
   rootDir: './test/',
-  setupFilesAfterEnv: ["jest-sinon"]
+  setupFilesAfterEnv: ["jest-sinon"],
+  runner : "groups",
+  globalSetup: "./setup.js"
 }
