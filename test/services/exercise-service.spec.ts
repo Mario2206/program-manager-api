@@ -6,7 +6,7 @@ describe("Exercise service", () => {
 
     const commonData = {
         name : "Push-up",
-        type : "pdc",
+        type : "PDC",
         image_path : "/path/",
         description : "The description paragraph"
     }
@@ -29,18 +29,37 @@ describe("Exercise service", () => {
 
             const data = commonData
 
-            const newUser = await ExerciseService.create(data)
+            const newExercice = await ExerciseService.create(data)
 
-            await expect(Database.getManager().findOneOrFail<Exercise>(Exercise, {name : data.name})).resolves.toEqual(newUser)
-
-        })
-
-        it("shouldn't create the exercise when some fields are uncorrect", async () => {
+            await expect(Database.getManager().findOneOrFail<Exercise>(Exercise, {name : data.name})).resolves.toEqual(newExercice)
 
         })
 
-        it("shouldn't create the exercise if it already exist", () => {
+        it("shouldn't create the exercise when exercise type is uncorrect", async (done) => {
+            const data = {...commonData, type : "badType"}
+
+            ExerciseService.create(data)
+            .then(()=>expect(true).toBeFalsy())
+            .catch(e => {                
+                expect(e[0].constraints.isOneOf).toBe("Exercise type field has a bad value")
+                done()
+            })
             
+
+        })
+
+        it("shouldn't create the exercise if it already exist", async (done) => {
+            const data = commonData
+
+            await ExerciseService.create(data)
+
+            ExerciseService.create(data)
+            .then(()=>expect(true).toBeFalsy())
+            .catch(e => {       
+                expect(e[0].constraints.Unique).not.toBe(undefined)
+                done()
+            })
+
         })
 
     })

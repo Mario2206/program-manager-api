@@ -60,7 +60,7 @@ describe("User controller", () => {
         })
 
         it("shouldn't subcribe the user if the mail already exist", async () => {
-            const expectedRes = new ErrorService(HTTP_BAD_REQUEST,UserController.errors.MAIL)
+            const expectedRes = new ErrorService(HTTP_BAD_REQUEST,{Unique : "Mail already exists"})
             const data = commonData
             const data2 = {...data, username : "Other"}
             
@@ -71,12 +71,12 @@ describe("User controller", () => {
             await UserController.subscribeUser(request, response, next)
             await UserController.subscribeUser(request2, response2, next2)
 
-            expect(next2).toBeCalledWith(expectedRes)
+            expect(next2).toHaveBeenCalledWith(expectedRes)
 
         })
 
         it("shouldn't subcribe the user if the username already exist", async () => {
-            const expectedRes = new ErrorService(HTTP_BAD_REQUEST,UserController.errors.USERNAME)
+            const expectedRes = new ErrorService(HTTP_BAD_REQUEST, {Unique : "Username already taken"})
             const data = commonData
             const data2 = {...data, mail : "Other@mail.com"}
             

@@ -1,8 +1,9 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {Length, IsEmail} from "class-validator"
+import { Unique } from "../core/validation/unique";
 
 @Entity()
-@Unique("User", ["mail", "username"])
+// @Unique(["mail", "username"])
 export class User {
 
     @PrimaryGeneratedColumn()
@@ -18,10 +19,16 @@ export class User {
 
     @Column()
     @Length(5, 100)
+    @Unique({
+        message : "Username already taken"
+    })
     username!: string;
 
     @Column()
     @IsEmail()
+    @Unique({
+        message : "Mail already exists"
+    })
     mail! : string;
 
     @Column()

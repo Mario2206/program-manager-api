@@ -1,3 +1,4 @@
+import { ValidationError } from "class-validator";
 import { Response, Request, NextFunction } from "express";
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SERVER_ERROR, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
@@ -23,7 +24,18 @@ export default class UserController {
             
             res.status(HTTP_CREATED).json(USER_CREATED)
 
-        }catch(e) {            
+        }catch(e) {   
+
+            const error = e[0].constraints || ""
+
+            
+            if(error &&  e[0] instanceof ValidationError) {
+                console.log(error);
+                
+                return next(new ErrorService(HTTP_BAD_REQUEST, error))
+            }
+              console.log("eererer");
+                     
             next(new ErrorService(HTTP_SERVER_ERROR, UserController.errors.SUB))
             
         }
