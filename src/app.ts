@@ -3,8 +3,9 @@ import express from "express"
 import bodyparser from "body-parser"
 import errorHandler from "./core/controller/error-handler"
 import userRoute from "./routes/users-route"
+import exerciseRoute from './routes/exercise-route'
 import Database from "./core/database/database"
-import { USER_ROUTE } from "./constants/routes";
+import { EXERCISE_ROUTE, USER_ROUTE } from "./constants/routes";
 import { Server } from "http";
 
 
@@ -21,6 +22,8 @@ async function app () : Promise<Server> {
         app.use(bodyparser.json())
         
         app.use(USER_ROUTE, userRoute)
+
+        app.use(EXERCISE_ROUTE, exerciseRoute)
 
         app.use(errorHandler)
 

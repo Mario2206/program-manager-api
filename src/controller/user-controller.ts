@@ -1,6 +1,5 @@
-import { ValidationError } from "class-validator";
 import { Response, Request, NextFunction } from "express";
-import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SERVER_ERROR, HTTP_SUCCESS } from "../constants/http";
+import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
 import AuthToken from "../core/authentification/auth-token";
 import ErrorService from "../core/error/error-service";

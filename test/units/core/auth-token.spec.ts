@@ -1,4 +1,4 @@
-import AuthToken from "../../src/core/authentification/auth-token"
+import AuthToken from "../../../src/core/authentification/auth-token"
 
 describe("Authentification entity", () => {
 

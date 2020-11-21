@@ -24,8 +24,6 @@ export default  function customValidate (entity : Object) : Promise<ErrorService
             resolve()
         })
         .catch((e)=> {
-            console.log(e);
-            
             reject(new ErrorDetail(BAD_VALIDATION,"Error during data Validation"))
         })
     })

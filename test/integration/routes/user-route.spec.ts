@@ -1,9 +1,9 @@
 import { Server } from "http"
 import request  from "supertest"
-import app from "../../src/app"
-import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../../src/constants/http"
-import { LOG_ROUTE, SUB_ROUTE, USER_ROUTE } from "../../src/constants/routes"
-import Database from "../../src/core/database/database"
+import app from "../../../src/app"
+import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../../../src/constants/http"
+import { LOG_ROUTE, SUB_ROUTE, USER_ROUTE } from "../../../src/constants/routes"
+import Database from "../../../src/core/database/database"
 
 
 
@@ -20,11 +20,11 @@ describe("user route", () => {
             return app().then((appEntity) => server = appEntity)
         })
 
-        afterAll( (done)=> {
-                 Database.disconnect()
-                 .then (()=> {
-                     server.close(done)
-                 })
+        afterAll(  (done)=> {
+            Database.disconnect()
+            .then (()=> {
+                server.close(done)
+            })
                 
         })
         
@@ -32,12 +32,12 @@ describe("user route", () => {
             return Database.clean("user")
         })
 
-        it("should send a positive response when the body request is correct",  () => {
+        it("should send a positive response when the body request is correct",  (done) => {
 
             const expectedResult = HTTP_CREATED
             const body = {
                 firstname : "Mario",
-                lastname : "Mars",
+                lastname : "Marsss",
                 username : "Mirtille7875",
                 mail : "mail@maiel.com",
                 password : "superPassword"
@@ -48,24 +48,34 @@ describe("user route", () => {
             .post(USER_ROUTE + SUB_ROUTE)
             .send(body)
             .expect(expectedResult)
+            .end((err, res)=> {
+                expect(err).toBeNull()
+                done()
+            })
 
         })
 
-        it("should send a negative response when the body request is uncorrect", () => {
+        it("should send a negative response when the body request is uncorrect", (done) => {
 
             const expectedResult = HTTP_BAD_REQUEST
             const body = {
                 firstname : "Mario",
                 lastname : "Mars",
                 username : "Mirtille7875",
-                mail : "mail@maiel.com",
+                mail : "",
                 password : "superPassword"
             }
             
             request(server)
             .post(USER_ROUTE + SUB_ROUTE)
             .send(body)
-            .expect(expectedResult)
+            .expect(HTTP_BAD_REQUEST)
+            .end((err, res)=>{
+
+                expect(err).toBeNull()
+                
+                done()
+            })
 
         })
         

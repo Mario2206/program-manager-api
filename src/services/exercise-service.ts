@@ -1,6 +1,6 @@
-import {  validateOrReject } from "class-validator";
 import { ExerciseSchema } from "../abstract/schema-model";
 import Database from "../core/database/database";
+import customValidate from "../core/validation/validate";
 import Exercise from "../model/exercise";
 
 export default class ExerciseService {
@@ -17,7 +17,7 @@ export default class ExerciseService {
         exercise.image_path = image_path
         exercise.description = description
         
-        await validateOrReject(exercise)
+        await customValidate(exercise)
 
         return Database.getManager().save(exercise)
 

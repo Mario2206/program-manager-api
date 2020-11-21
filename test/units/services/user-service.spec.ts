@@ -1,12 +1,10 @@
 
-import { BAD_AUTH, BAD_VALIDATION } from "../../src/constants/types-error"
-import Database from "../../src/core/database/database"
+import { BAD_AUTH, BAD_VALIDATION } from "../../../src/constants/types-error"
+import ErrorDetail from "../../../src/core/error/error-detail"
+import { User } from "../../../src/model/user"
+import UserService from "../../../src/services/user-service"
 
-import ErrorDetail from "../../src/core/error/error-detail"
-import { User } from "../../src/model/user"
-import UserService from "../../src/services/user-service"
-
-import MockDatabase, { MockEntityManager } from "../utils/mock-database"
+import MockDatabase, { MockEntityManager } from "../../utils/mock-database"
 
 
 /**

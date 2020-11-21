@@ -1,8 +1,8 @@
 import httpMocks from "node-mocks-http"
-import errorHandler from "../../src/core/controller/error-handler"
-import ErrorDetail from "../../src/core/error/error-detail"
-import ErrorService from "../../src/core/error/error-service"
-import { generateMockRequestResponse } from "../utils/utils"
+import errorHandler from "../../../src/core/controller/error-handler"
+import ErrorDetail from "../../../src/core/error/error-detail"
+import ErrorService from "../../../src/core/error/error-service"
+import { generateMockRequestResponse } from "../../utils/utils"
 
 describe("Error-Handler", ()=> {
 

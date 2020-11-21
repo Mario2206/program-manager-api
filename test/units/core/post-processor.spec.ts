@@ -1,9 +1,9 @@
-import { HTTP_BAD_REQUEST } from "../../src/constants/http"
-import { MISSING_KEYS } from "../../src/constants/types-error"
-import ErrorDetail from "../../src/core/error/error-detail"
-import ErrorService from "../../src/core/error/error-service"
-import PostProcessor from "../../src/core/middleware/post-processor"
-import { generateMockRequestResponse } from "../utils/utils"
+import { HTTP_BAD_REQUEST } from "../../../src/constants/http"
+import { MISSING_KEYS } from "../../../src/constants/types-error"
+import ErrorDetail from "../../../src/core/error/error-detail"
+import ErrorService from "../../../src/core/error/error-service"
+import PostProcessor from "../../../src/core/middleware/post-processor"
+import { generateMockRequestResponse } from "../../utils/utils"
 
 describe("PostProcessor::checkKeys", ()=> {
 

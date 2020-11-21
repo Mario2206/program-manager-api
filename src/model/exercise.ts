@@ -1,3 +1,4 @@
+import { IsNotEmpty } from "class-validator";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { IsOneOf } from "../core/validation/is-one-of";
 import { Unique } from "../core/validation/unique";
@@ -20,6 +21,7 @@ export default class Exercise {
     type!: string
 
     @Column()
+    @IsNotEmpty()
     image_path!: string 
 
     @Column()

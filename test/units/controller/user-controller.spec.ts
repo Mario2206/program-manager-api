@@ -1,11 +1,11 @@
-import { HTTP_BAD_REQUEST } from "../../src/constants/http"
-import { USER_CREATED } from "../../src/constants/messages"
-import UserController from "../../src/controller/user-controller"
-import ErrorService from "../../src/core/error/error-service"
-import { generateMockRequestResponse } from "../utils/utils"
+import { HTTP_BAD_REQUEST } from "../../../src/constants/http"
+import { USER_CREATED } from "../../../src/constants/messages"
+import UserController from "../../../src/controller/user-controller"
+import ErrorService from "../../../src/core/error/error-service"
+import { generateMockRequestResponse } from "../../utils/utils"
 import sinon, { createSandbox } from "sinon"
-import ErrorDetail from "../../src/core/error/error-detail"
-import UserService from "../../src/services/user-service"
+import ErrorDetail from "../../../src/core/error/error-detail"
+import UserService from "../../../src/services/user-service"
 
 
 /**

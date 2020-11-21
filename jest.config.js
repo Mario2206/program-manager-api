@@ -5,5 +5,5 @@ module.exports = {
   rootDir: './test/',
   setupFilesAfterEnv: ["jest-sinon"],
   runner : "groups",
-  globalSetup: "./setup.js"
+  globalSetup: "./setup.js",
 }
