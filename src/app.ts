@@ -13,7 +13,9 @@ import { Server } from "http";
 
 async function app () : Promise<Server> {
 
-    await Database.connect()
+    const db = new Database()
+
+    await db.connect()
 
     return new Promise( (resolve)=> {
             

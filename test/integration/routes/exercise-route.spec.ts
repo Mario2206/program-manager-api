@@ -9,6 +9,7 @@ import Database from "../../../src/core/database/database"
 describe('Exercise route', () => {
 
     let server : Server;
+    const db = new Database()
 
     describe("When the client wants to create an exercise", () => {
 
@@ -17,7 +18,7 @@ describe('Exercise route', () => {
         })
 
         afterAll(  (done)=> {
-            Database.disconnect()
+            db.disconnect()
             .then (()=> {
                 server.close(done)
             })
@@ -25,7 +26,7 @@ describe('Exercise route', () => {
         })
         
         afterEach(()=> {
-            return Database.clean("exercise")
+            return db.clean("exercise")
         })
 
         it("should responde a created code as response when the request has all correct fields with correct values and an image file attached", (done) => {

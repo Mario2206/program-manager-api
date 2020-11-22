@@ -1,14 +1,19 @@
+import Exercise from "../../model/exercise";
 import { User } from "../../model/user";
-import { UserSchema } from "../type/schema-model";
+import { ExerciseSchema, UserSchema } from "../type/schema-model";
 
 export interface IUserService {
     register(providedData : UserSchema) : Promise<User>,
     login(userId : {username? : string, mail? : string, password : string}) : Promise<User>
 }
 
+export interface IExerciseService {
+    create ({name, type, image_path, description} : ExerciseSchema) : Promise<Exercise>
+}
 
 const TYPES = {
-    UserService : Symbol.for("IUserService")
+    UserService : Symbol.for("IUserService"),
+    ExerciseService : Symbol.for("IExerciseService")
 }
 
 export default TYPES

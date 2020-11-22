@@ -13,7 +13,7 @@ import Database from "../../../src/core/database/database"
 describe("user route", () => {
     
     let server : Server;
-
+    const db = new Database()
     describe("Subscribe route", () => {
         
         beforeAll(()=>{
@@ -21,7 +21,7 @@ describe("user route", () => {
         })
 
         afterAll(  (done)=> {
-            Database.disconnect()
+            db.disconnect()
             .then (()=> {
                 server.close(done)
             })
@@ -29,7 +29,7 @@ describe("user route", () => {
         })
         
         afterEach(()=> {
-            return Database.clean("user")
+            return db.clean("user")
         })
 
         it("should send a positive response when the body request is correct",  (done) => {
@@ -85,6 +85,7 @@ describe("user route", () => {
     describe("Login route", ()=> {
         
         let server : Server;
+        const db = new Database()
         const commonData = {
             username : "Mirtillze78",
             password : "superPassword",
@@ -98,7 +99,7 @@ describe("user route", () => {
         })
 
         afterAll( (done)=> {
-            Database.disconnect()
+            db.disconnect()
             .then (()=> {
                 server.close(done)
             })
@@ -115,7 +116,7 @@ describe("user route", () => {
         })
 
         afterEach(async ()=> {
-            await Database.clean("user")
+            await db.clean("user")
         })
         
         it("should return positive response when the request body contains all required values for connection", (done) => {

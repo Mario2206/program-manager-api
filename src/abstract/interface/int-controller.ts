@@ -6,9 +6,13 @@ export interface IUserController {
     login(req: Request, res : Response, next : NextFunction) : void
 }
 
+export interface IExerciseController {
+    createExercise (req : Request, res : Response, next : NextFunction) : Promise<void> 
+}
 
 const TYPES = {
-    UserController : Symbol.for("IUserController")
+    UserController : Symbol.for("IUserController"),
+    ExerciseController : Symbol.for("IExerciseController")
 }
 
 export default TYPES

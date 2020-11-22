@@ -1,31 +1,34 @@
+import { injectable } from "inversify";
 import { Connection, createConnection, EntityManager, EntityTarget, getConnection, getManager, getRepository, Repository } from "typeorm";
+import { IDatabase } from "../../abstract/interface/int-core";
 
-export default class Database {
+@injectable()
+export default class Database implements IDatabase {
 
 
     public static connectName : string = process.env.NODE_ENV ?? "development"
 
-    public static connect() : Promise<Connection> {
+    public  connect() : Promise<Connection> {
         return createConnection(Database.connectName)
     }
 
-    public static disconnect() : Promise<void> {
+    public  disconnect() : Promise<void> {
         return getConnection(Database.connectName).close()
     }
 
-    public static getManager() : EntityManager{
+    public  getManager() : EntityManager{
         return getManager(Database.connectName)
     }
 
-    public static getConnection() : Connection {
+    public  getConnection() : Connection {
         return getConnection(Database.connectName)
     }
 
-    public static getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity> {
+    public  getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity> {
         return getRepository(entityClass)
     }
     
-    public static  clean(tableName : string) : Promise<void> {
+    public   clean(tableName : string) : Promise<void> {
         return getConnection(Database.connectName).query(`DELETE  FROM "${tableName}" ` )
     }
 

@@ -11,8 +11,8 @@ export function Unique( validationOptions?: ValidationOptions) {
       options: (()=> (validationOptions?.message ? validationOptions :  {...validationOptions, message : propertyName + " value in " + object.constructor.name + " must be unique in the table" }))(),
       validator: {
         async validate(value: any, args: ValidationArguments) {  
-             
-            const entity = await Database.getManager().findOne(object.constructor.name, {[propertyName] : value} )     
+            const db = new Database() 
+            const entity = await db.getManager().findOne(object.constructor.name, {[propertyName] : value} )     
     
             
             return entity ? false : true

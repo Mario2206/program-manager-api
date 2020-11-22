@@ -1,15 +1,15 @@
 import {UserSchema} from "../abstract/type/schema-model"
-import Database from "../core/database/database"
 import {User} from "../model/user"
 import EncryptedString from "../core/encrypt/encrypted-string"
-import customValidate from "../core/validation/validate"
 import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
 import ErrorDetail from "../core/error/error-detail"
-import { injectable } from "inversify"
+import {  injectable } from "inversify"
+import Service from "./service"
+import { IUserService } from "../abstract/interface/int-service"
 
 
 @injectable()
-export default class UserService {
+export default class UserService extends Service implements IUserService{
 
     public static errors = {
         BAD_USERID : "Bad identification",
@@ -39,10 +39,10 @@ export default class UserService {
         user.mail = providedData.mail
         user.password = encryptPassword.value
         
-        await customValidate(user)
+        await this._validator.validate(user)
         
         
-        return Database.getManager().save(user)
+        return this._database.getManager().save(user)
     }
 
     /**
@@ -50,6 +50,8 @@ export default class UserService {
      * 
      * @param userId 
      * @param password 
+     * 
+     * @return Promise<User>
      */
     public login (userId : {username? : string, mail? : string, password : string}) : Promise<User> {
         
@@ -61,7 +63,7 @@ export default class UserService {
 
             const connectId = userId.username ? {username : userId.username} : {mail : userId.mail}
                         
-            Database.getManager().findOne(User, connectId)
+            this._database.getManager().findOne(User, connectId)
             .then(async (user : User | undefined) => {
                 
                 

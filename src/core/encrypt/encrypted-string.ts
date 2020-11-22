@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt"
+import { injectable } from "inversify"
+import { IEncryptedString } from "../../abstract/interface/int-core"
 
-
-export default class EncryptedString {
+@injectable()
+export default class EncryptedString implements IEncryptedString{
     
     private _content : string 
 

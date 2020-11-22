@@ -1,15 +1,14 @@
 import { ExerciseSchema } from "../abstract/type/schema-model";
-import Database from "../core/database/database";
-import customValidate from "../core/validation/validate";
 import Exercise from "../model/exercise";
+import Service from "./service";
 
-export default class ExerciseService {
+export default class ExerciseService extends Service {
 
     public static errors = {
         BAD_TYPE : "The exercise has a bad type"
     }
 
-    public static async create ({name, type, image_path, description} : ExerciseSchema) : Promise<Exercise> {
+    public async create ({name, type, image_path, description} : ExerciseSchema) : Promise<Exercise> {
 
         const exercise = new Exercise()
         exercise.name = name 
@@ -17,9 +16,9 @@ export default class ExerciseService {
         exercise.image_path = image_path
         exercise.description = description
         
-        await customValidate(exercise)
+        await this._validator.validate(exercise)
 
-        return Database.getManager().save(exercise)
+        return this._database.getManager().save(exercise)
 
     }
 
