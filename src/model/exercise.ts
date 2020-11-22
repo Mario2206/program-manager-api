@@ -16,7 +16,7 @@ export default class Exercise {
 
     @Column()
     @IsOneOf(["PDC", "Musculation classique", "Street Workout"], {
-        message : "Exercise type field has a bad value"
+        message : "The field type of exercise has a bad value"
     })
     type!: string
 

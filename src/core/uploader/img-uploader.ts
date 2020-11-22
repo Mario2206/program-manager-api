@@ -1,5 +1,5 @@
 import multer from "multer";
-import { middleware } from "../../abstract/middleware/type-middleware";
+import { middleware } from "../../abstract/type-middleware";
 
 export default class ImgUploader {
 

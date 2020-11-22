@@ -79,7 +79,7 @@ describe("Exercise service", () => {
 
         })
 
-        it("shouldn't create the exercise if the image path is empty", async () => {
+        it("shouldn't create the exercise if one (or more) field value is empty ", async () => {
             const data = {...commonData, image_path : ""}
 
             fakeEntityManager.save.rejects()

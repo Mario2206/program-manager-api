@@ -9,7 +9,11 @@ export default class ExerciseController {
 
         try {
 
-             await ExerciseService.create(req.body)
+            const filename = req.file ? req.file.filename : "default.png"
+
+            const body = {...req.body,image_path : filename}
+            
+             await ExerciseService.create(body)
 
              res.status(HTTP_CREATED).json("Exercise created")
 
