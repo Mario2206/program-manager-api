@@ -1,4 +1,4 @@
-import IEErrorService, { ErrorDetail } from "../../abstract/interface-error"
+import IEErrorService, { ErrorDetail } from "../../abstract/interface/int-error"
 
 export default class ErrorService implements IEErrorService  {
 

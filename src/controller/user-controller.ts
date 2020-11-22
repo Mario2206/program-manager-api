@@ -1,41 +1,54 @@
 import { Response, Request, NextFunction } from "express";
+import { inject, injectable } from "inversify";
+
+import { IUserController } from "../abstract/interface/int-controller";
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
-import AuthToken from "../core/authentification/auth-token";
+import ControllerTypes, { IUserService } from "../abstract/interface/int-service";
+import CoreTypes, { IAuthToken } from "../abstract/interface/int-core"
+
 import ErrorService from "../core/error/error-service";
-import UserService from "../services/user-service";
 
-export default class UserController {
+@injectable()
+export default class UserController implements IUserController {
+
+    private _userService : IUserService
+
+    private _authToken : IAuthToken
+    
+    public constructor (
+        @inject(ControllerTypes.UserService) userService : IUserService,
+        @inject(CoreTypes.AuthToken) authToken : IAuthToken
+        ) { 
+
+        this._userService = userService
+        this._authToken = authToken
+    }   
 
 
-    public static async subscribeUser(req : Request, res : Response, next : NextFunction) : Promise<void> {
-
+    public async subscribeUser(req : Request, res : Response, next : NextFunction) : Promise<void> {
+    
         try {
-            
-            await UserService.register(req.body)
+            await this._userService.register(req.body)
   
             res.status(HTTP_CREATED).json(USER_CREATED)
 
-        }catch(e) {   
-            
+        }catch(e) {               
             next(e instanceof Error ? e : new ErrorService(HTTP_BAD_REQUEST, e))
             
         }
     } 
 
-    public static async login (req : Request, res : Response, next : NextFunction) : Promise<void> {
+    public async login (req : Request, res : Response, next : NextFunction) : Promise<void> {
 
         try {
             
-            await UserService.login(req.body)
+            await this._userService.login(req.body)
                 
-            const key = process.env.PRIVATE_KEY_FOR_TOKEN ?? ""
+            this._authToken.setExpirationDate('24h')
+            this._authToken.generate()
             
-            const token = new AuthToken(key)
-            token.setExpirationDate('24h')
-            token.generate()
-            
-            res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + token.value).json("Connected")
+            res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + this._authToken.value).json("Connected")
             
         } catch (e) {            
             next(e instanceof Error ? e : new ErrorService(HTTP_BAD_REQUEST, e))

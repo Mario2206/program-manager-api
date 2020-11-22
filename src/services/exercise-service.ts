@@ -1,4 +1,4 @@
-import { ExerciseSchema } from "../abstract/schema-model";
+import { ExerciseSchema } from "../abstract/type/schema-model";
 import Database from "../core/database/database";
 import customValidate from "../core/validation/validate";
 import Exercise from "../model/exercise";

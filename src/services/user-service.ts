@@ -1,16 +1,14 @@
-import {UserSchema} from "../abstract/schema-model"
+import {UserSchema} from "../abstract/type/schema-model"
 import Database from "../core/database/database"
 import {User} from "../model/user"
 import EncryptedString from "../core/encrypt/encrypted-string"
-import {  validateOrReject } from "class-validator"
 import customValidate from "../core/validation/validate"
-import ErrorService from "../core/error/error-service"
-import { HTTP_BAD_REQUEST } from "../constants/http"
 import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
 import ErrorDetail from "../core/error/error-detail"
+import { injectable } from "inversify"
 
 
-
+@injectable()
 export default class UserService {
 
     public static errors = {
@@ -28,7 +26,7 @@ export default class UserService {
      * @return Promise<User>
      * 
      */
-    public static async register (providedData : UserSchema) : Promise<User> {
+    public  async register (providedData : UserSchema) : Promise<User> {
         
         const encryptPassword = new EncryptedString(providedData.password)
         await encryptPassword.encrypt()
@@ -53,7 +51,7 @@ export default class UserService {
      * @param userId 
      * @param password 
      */
-    public static login (userId : {username? : string, mail? : string, password : string}) : Promise<User> {
+    public login (userId : {username? : string, mail? : string, password : string}) : Promise<User> {
         
         return new Promise ((resolve, reject) => {
 

@@ -1,6 +1,8 @@
+import { injectable } from "inversify"
 import jwt from "jsonwebtoken"
-import { IELitteralObject } from "../../abstract/int-common"
+import { IELitteralObject } from "../../abstract/interface/int-common"
 
+@injectable()
 export default class AuthToken {
 
     public static errors = {
@@ -12,10 +14,10 @@ export default class AuthToken {
     private _privateKey = ""
     private _expiration = {}
 
-    constructor(privateKey : string) {
-        if(privateKey.length === 0) throw new Error(AuthToken.errors.CRYPT_KEY_EMPTY)
-        this._privateKey = privateKey
+    constructor() {
+        this._privateKey = process.env.PRIVATE_KEY_FOR_TOKEN ?? "PRIVATE_KEY"
     }
+    
     /**
      * For setting custom payload
      * 
@@ -51,6 +53,8 @@ export default class AuthToken {
      * 
      * @param token 
      * @param privateKey 
+     * 
+     * @return IELitteralObject
      */
     public static authorize (token : string, privateKey : string) : IELitteralObject{
         const decoded = jwt.verify(token, privateKey)
