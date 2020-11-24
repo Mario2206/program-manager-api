@@ -17,10 +17,10 @@ export interface ICustomValidation {
 }
 
 export interface IAuthToken {
-    value : string,
     setCustomPayload(payload : IELitteralObject) : void,
     setExpirationDate (duration : string) : void,
-    generate () : void
+    generate () : string,
+    authorize (incomingToken : string) : IELitteralObject
 
 }
 

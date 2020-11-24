@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { IExerciseController } from "../abstract/interface/int-controller";
+import { IExerciseController } from "../abstract/interface/int-middleware";
 import { IExerciseService } from "../abstract/interface/int-service";
 import { HTTP_BAD_REQUEST, HTTP_CREATED } from "../constants/http";
 import ErrorService from "../core/error/error-service";

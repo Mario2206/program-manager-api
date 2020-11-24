@@ -41,12 +41,8 @@ export default class AuthToken implements IAuthToken{
     /**
      * For generating the token
      */
-    public generate () : void {
-       this._token = jwt.sign(this._payload, this._privateKey, this._expiration)
-    }
-
-    public get value () : string {
-        return this._token
+    public generate () : string {
+       return jwt.sign(this._payload, this._privateKey, this._expiration)
     }
 
     /**

@@ -1,6 +1,11 @@
 
+import Sinon, { SinonSandbox } from "sinon"
+import { EntityManager } from "typeorm"
+import { ICustomValidation, IDatabase, IEncryptedString } from "../../../src/abstract/interface/int-core"
 import { BAD_AUTH, BAD_VALIDATION } from "../../../src/constants/types-error"
+import EncryptedString from "../../../src/core/encrypt/encrypted-string"
 import ErrorDetail from "../../../src/core/error/error-detail"
+import CustomValidation from "../../../src/core/validation/custom-validation"
 import { User } from "../../../src/model/user"
 import UserService from "../../../src/services/user-service"
 
@@ -14,25 +19,28 @@ describe("User Service", () => {
         
     describe("When registering", () => {
 
-        let db : any;
-        let fakeEntityManager : any;
+        let mockDb : IDatabase;
+        let sandbox : SinonSandbox;
+        let fakeEntityManager : Sinon.SinonStubbedInstance<EntityManager>;
+        let validator : Sinon.SinonStubbedInstance<ICustomValidation>;
+        let encryptedString : IEncryptedString;
 
         beforeEach(()=> {
-             fakeEntityManager = MockEntityManager.create()
-             db = new MockDatabase(fakeEntityManager)
-        })
+            fakeEntityManager = MockEntityManager.create()
+            const [db, box] = MockDatabase.create(fakeEntityManager)
+            mockDb = db 
+            sandbox = box
+            validator = sandbox.createStubInstance(CustomValidation)
+            encryptedString =sandbox.createStubInstance(EncryptedString)
+       })
 
-        afterEach(()=> {
-            db.close()
-        })
+       afterEach(()=> {
+           sandbox.restore()
+       })
 
         
 
-        it("shouldn't register the new User in database if he is already exist", async () => {
-
-            
-            fakeEntityManager.findOne.resolves(new User())
-            
+        it("shouldn't register the new User in database if he already exists", async () => {
 
             const data = {
                 firstname : "Mario",
@@ -43,6 +51,10 @@ describe("User Service", () => {
             }
             const errors = [new ErrorDetail(BAD_VALIDATION,"Username already taken" ), new ErrorDetail(BAD_VALIDATION,"Username already taken" )]
 
+            validator.validate.rejects(errors)
+            const userService = new UserService(mockDb, validator, encryptedString)
+            
+
             const user = new User()
             user.firstname = data.firstname
             user.lastname = data.lastname
@@ -51,7 +63,34 @@ describe("User Service", () => {
             user.password = data.password
             
            
-            await expect(UserService.register(data)).rejects.toEqual(expect.arrayContaining(errors))
+            await expect(userService.register(data)).rejects.toEqual(expect.arrayContaining(errors))
+
+        })
+
+        it("shouldn't register the new User in database if some data are uncorrect", async () => {
+
+            const data = {
+                firstname : "Mario",
+                lastname : "Mars",
+                username : "Mirtille78",
+                mail : "mail",
+                password : "superPassword"
+            }
+            const errors = [new ErrorDetail(BAD_VALIDATION,"IncorrectMail" )]
+
+            validator.validate.rejects(errors)
+            const userService = new UserService(mockDb, validator, encryptedString)
+            
+
+            const user = new User()
+            user.firstname = data.firstname
+            user.lastname = data.lastname
+            user.username = data.username
+            user.mail = data.mail
+            user.password = data.password
+            
+           
+            await expect(userService.register(data)).rejects.toEqual(expect.arrayContaining(errors))
 
         })
 
@@ -68,8 +107,9 @@ describe("User Service", () => {
             fakeEntityManager.find.resolves()
             fakeEntityManager.save.resolvesArg(0)
 
-           
-            const user =await UserService.register(data)
+            const userService = new UserService(mockDb, validator, encryptedString)
+
+            const user =await userService.register(data)
         
 
             expect(user.firstname).toBe(data.firstname)
@@ -92,36 +132,48 @@ describe("User Service", () => {
             mail : "mail@mail.com",
             password : "superPassword",
         }
-        let user : User;
        
-        let db : any;
-        let fakeEntityManager : any;
+        let mockDb : IDatabase;
+        let sandbox : SinonSandbox;
+        let fakeEntityManager : Sinon.SinonStubbedInstance<EntityManager>;
+        let validator : Sinon.SinonStubbedInstance<ICustomValidation>;
+        let encryptedString : Sinon.SinonStubbedInstance<IEncryptedString>;
 
-        beforeEach(async ()=> {
-             fakeEntityManager = MockEntityManager.create()
-             fakeEntityManager.save.resolvesArg(0)
-             db = new MockDatabase(fakeEntityManager)
-             user = await UserService.register(commonData)
-        })
+        beforeEach(()=> {
+            fakeEntityManager = MockEntityManager.create()
+            const [db, box] = MockDatabase.create(fakeEntityManager)
+            mockDb = db 
+            sandbox = box
+            validator = sandbox.createStubInstance(CustomValidation)
+            encryptedString =sandbox.createStubInstance(EncryptedString)
+       })
 
-        afterEach(()=> {
-            db.close()
-        })
+       afterEach(()=> {
+           sandbox.restore()
+       })
 
 
         it("should return user data when the user id is correct", async  () => {
-            
-            fakeEntityManager.findOne.resolves(user)
-            
-            const userId = {username : user.username, password : commonData.password}
+
+            const expectedUser = new User()
+            expectedUser.firstname = commonData.firstname
+            expectedUser.lastname = commonData.lastname
+            expectedUser.username = commonData.username
+            expectedUser.mail = commonData.mail
+
+            fakeEntityManager.findOne.resolves(expectedUser)
+            encryptedString.compare.resolves(true)
+            const userService = new UserService(mockDb, validator, encryptedString)
+
+            const userId = {username : commonData.username, password : commonData.password}
             
             try {
                 
-                const userConnected  = await UserService.login(userId)
-                expect(userConnected.firstname).toBe(commonData.firstname)
-                expect(userConnected.lastname).toBe(commonData.lastname) 
-                expect(userConnected.username).toBe(commonData.username) 
-                expect(userConnected.mail).toBe(commonData.mail) 
+                const userConnected  = await userService.login(userId)
+                expect(userConnected.firstname).toBe(expectedUser.firstname)
+                expect(userConnected.lastname).toBe(expectedUser.lastname) 
+                expect(userConnected.username).toBe(expectedUser.username) 
+                expect(userConnected.mail).toBe(expectedUser.mail) 
 
             } catch(e) {
                 expect(e).toBeNull()
@@ -130,33 +182,30 @@ describe("User Service", () => {
 
         test("shouldn't return user data when the user id is uncorrect", async  () => {
 
-            fakeEntityManager.findOne.resolves()
-
-            const userId = {username : "incorrect username", password : user.password}
+            const userId = {username : "incorrect username", password : commonData.password}
             const expectedError = new ErrorDetail( BAD_AUTH, "User id is erroned")
+
+            fakeEntityManager.findOne.resolves()
+            const userService = new UserService(mockDb, validator, encryptedString)
             
-            try {
-                await UserService.login(userId)
-                expect(false).toBeTruthy()
-            } catch(e) {                
-                expect(e).toEqual(expectedError)
-            }
+          
+            await expect(userService.login(userId)).rejects.toEqual(expectedError)
+           
             
         })
 
         test("shouldn't return user data when the password is uncorrect", async  () => {
 
-            fakeEntityManager.findOne.resolves(user)
-            
-            const userId = {username : user.username, password : "uncorrectPassword"}
+            const userId = {username : commonData.username, password : "uncorrectPassword"}
             const expectedError = new ErrorDetail( BAD_AUTH, "Password is uncorrect")
+
+            encryptedString.compare.resolves()
+            fakeEntityManager.findOne.resolves(new User())
+            const userService = new UserService(mockDb, validator, encryptedString)
             
-            try {
-                await UserService.login(userId)
-                expect(false).toBeTruthy()
-            } catch(e) {
-                expect(e).toEqual(expectedError)
-            }
+            
+            
+            await expect(userService.login(userId)).rejects.toEqual(expectedError)
             
         })
     })

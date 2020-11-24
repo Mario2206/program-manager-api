@@ -1,16 +1,16 @@
 import { NextFunction, Response, Request } from "express";
-import { IELitteralObject } from "../../abstract/interface/int-common";
-import {middleware} from "../../abstract/type/type-middleware"
-import { HTTP_BAD_REQUEST } from "../../constants/http";
-import { MISSING_KEYS } from "../../constants/types-error";
-import ErrorDetail from "../error/error-detail";
-import ErrorService from "../error/error-service";
+import { IELitteralObject } from "../abstract/interface/int-common";
+import {middleware} from "../abstract/type/type-middleware"
+import { HTTP_BAD_REQUEST } from "../constants/http";
+import { MISSING_KEYS } from "../constants/types-error";
+import ErrorDetail from "./error/error-detail";
+import ErrorService from "./error/error-service";
 
 /**
  * Class for processing the body of a request
  */
 
-export default class PostProcessor {
+export default class PostProcessorMiddleware {
 
     public static errors = {
 

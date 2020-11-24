@@ -1,9 +1,9 @@
 import {Router} from "express"
 import { LOG_ROUTE, SUB_ROUTE } from "../constants/routes"
-import PostProcessor from "../core/middleware/post-processor"
+import PostProcessor from "../core/post-processor-middleware"
 import container from "../../inversify.config"
-import { IUserController } from "../abstract/interface/int-controller"
-import controllerTypes from "../abstract/interface/int-controller"
+import { IUserController } from "../abstract/interface/int-middleware"
+import controllerTypes from "../abstract/interface/int-middleware"
 
 const router = Router()
 

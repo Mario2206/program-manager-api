@@ -1,6 +1,6 @@
 import {Container} from "inversify"
 
-import ControllerTypes, { IExerciseController, IUserController } from "./src/abstract/interface/int-controller"
+import ControllerTypes, { IExerciseController, IUserController } from "./src/abstract/interface/int-middleware"
 import ServiceTypes, { IExerciseService, IUserService } from "./src/abstract/interface/int-service"
 import CoreTypes, { IAuthToken, ICustomValidation, IDatabase, IEncryptedString, IImgUploader } from "./src/abstract/interface/int-core"
 

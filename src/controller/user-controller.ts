@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 
-import { IUserController } from "../abstract/interface/int-controller";
+import { IUserController } from "../abstract/interface/int-middleware";
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
 import ControllerTypes, { IUserService } from "../abstract/interface/int-service";
@@ -46,9 +46,9 @@ export default class UserController implements IUserController {
             await this._userService.login(req.body)
                 
             this._authToken.setExpirationDate('24h')
-            this._authToken.generate()
+            const tokenValue = this._authToken.generate()
             
-            res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + this._authToken.value).json("Connected")
+            res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + tokenValue).json("Connected")
             
         } catch (e) {            
             next(e instanceof Error ? e : new ErrorService(HTTP_BAD_REQUEST, e))

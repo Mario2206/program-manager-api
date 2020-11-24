@@ -9,8 +9,8 @@ describe("Authentification entity", () => {
         it("should return a token", () => {
 
             const token = new AuthToken()
-            token.generate()            
-            expect(token.value).not.toBe("")
+            const tokenVal = token.generate()            
+            expect(tokenVal).not.toBe("")
 
         })
         
@@ -21,11 +21,11 @@ describe("Authentification entity", () => {
             const tokenWithPayload = new AuthToken()
             tokenWithPayload.setCustomPayload(payload)
 
-            tokenWithPayload.generate()    
-            normalToken.generate()   
+            const tokenWithPayoadVal = tokenWithPayload.generate()    
+            const normalTokenVal = normalToken.generate()   
 
-            expect(tokenWithPayload.value).not.toBe("")
-            expect(tokenWithPayload.value).not.toBe(normalToken.value)
+            expect(tokenWithPayoadVal).not.toBe("")
+            expect(tokenWithPayoadVal).not.toBe(normalTokenVal)
 
         })
 
@@ -33,14 +33,16 @@ describe("Authentification entity", () => {
 
             const date = "12h"
             const normalToken = new AuthToken()
+            const normalTokenValue = normalToken.generate()
+            
             const tokenWithPayload = new AuthToken()
             tokenWithPayload.setExpirationDate(date)
 
             tokenWithPayload.generate()    
-            normalToken.generate()   
+            const tokenWithPayloadValue = tokenWithPayload.generate()   
 
-            expect(tokenWithPayload.value).not.toBe("")
-            expect(tokenWithPayload.value).not.toBe(normalToken.value)
+            expect(tokenWithPayloadValue).not.toBe("")
+            expect(tokenWithPayloadValue).not.toBe(normalTokenValue)
 
         })
 
@@ -52,19 +54,27 @@ describe("Authentification entity", () => {
             const expectedResult = {username : "Mardio"}
             const token = new AuthToken()
             token.setCustomPayload(expectedResult)
-            token.generate()
+            const tokenValue = token.generate()
 
-            const result = token.authorize(token.value)
+            const result = token.authorize(tokenValue)
             
             expect(result.username).toBe(expectedResult.username)
         })
         it("should throw an error if the token has expired", () => {
             const token = new AuthToken()
             token.setExpirationDate("0")
-            token.generate()
+            const tokenValue = token.generate()
 
             
-            expect(()=>token.authorize(token.value)).toThrow(Error)
+            expect(()=>token.authorize(tokenValue)).toThrow(Error)
+        })
+
+        it("should throw an error when the token is erroned", () => {
+            const token = new AuthToken()
+            token.setExpirationDate("0")
+
+            
+            expect(()=>token.authorize("Bad token")).toThrow(Error)
         })
 
     })

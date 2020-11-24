@@ -3,9 +3,14 @@ import { USER_CREATED } from "../../../src/constants/messages"
 import UserController from "../../../src/controller/user-controller"
 import ErrorService from "../../../src/core/error/error-service"
 import { generateMockRequestResponse } from "../../utils/utils"
-import sinon, { createSandbox } from "sinon"
+import sinon, { createSandbox, createStubInstance } from "sinon"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import UserService from "../../../src/services/user-service"
+import { IUserController } from "../../../src/abstract/interface/int-middleware"
+import { IUserService } from "../../../src/abstract/interface/int-service"
+import { IAuthToken } from "../../../src/abstract/interface/int-core"
+import AuthToken from "../../../src/core/authentification/auth-token"
+import Sinon from "sinon"
 
 
 /**
@@ -22,7 +27,17 @@ describe("User controller", () => {
     }
     describe("Subscription", () => {
 
+        let userController : IUserController
+        let userService : Sinon.SinonStubbedInstance<IUserService>
+        let authToken : IAuthToken
+
         const sandbox = createSandbox()
+
+        beforeEach(()=> {
+            userService = sandbox.createStubInstance(UserService)
+            authToken = sandbox.createStubInstance(AuthToken)
+            userController = new UserController(userService, authToken)
+        })
 
         afterEach(()=> sandbox.restore())
 
@@ -30,13 +45,13 @@ describe("User controller", () => {
             const expectedRes = USER_CREATED
             const data = commonData
 
-            const [request, response, next] = generateMockRequestResponse({body : data})
+            userService.register.resolves()
 
-            sandbox.stub(UserService, "register").resolves()
+            const [request, response, next] = generateMockRequestResponse({body : data})
 
             response.json = jest.fn()
 
-            await UserController.subscribeUser(request, response, next)
+            await userController.subscribeUser(request, response, next)
 
             expect(next).not.toHaveBeenCalled()
             expect(response.json).toHaveBeenCalledWith(expectedRes)
@@ -48,14 +63,13 @@ describe("User controller", () => {
 
             const [request, response, next] = generateMockRequestResponse({body : data})
 
-            sandbox.stub(UserService, "register").rejects()
+            userService.register.rejects(new ErrorDetail("type", "value"))
 
-            response.json = jest.fn()
-            
-            await UserController.subscribeUser(request, response, next)
+            await userController.subscribeUser(request, response, next)
 
             expect(next).toBeCalled()
-            
+            expect(next.args[0][0]).toBeInstanceOf(ErrorService)
+            expect(next.args[0][0].status).toBe(HTTP_BAD_REQUEST)
         
         })
 
@@ -63,43 +77,53 @@ describe("User controller", () => {
             const data = commonData
             const data2 = {...data, username : "Other"}
             
-            sandbox.stub(UserService, "register").rejects()
-
             const [request, response, next] = generateMockRequestResponse({body : data})
-            const [request2, response2, next2] = generateMockRequestResponse({body : data2})
 
+            userService.register.rejects(new ErrorDetail("type", "value"))
             
-            await UserController.subscribeUser(request, response, next)
-            await UserController.subscribeUser(request2, response2, next2)
-            
-            expect(next2.called).toBeTruthy()
+            await userController.subscribeUser(request, response, next)
+
+            expect(next).toBeCalled()
+            expect(next.args[0][0]).toBeInstanceOf(ErrorService)
+            expect(next.args[0][0].status).toBe(HTTP_BAD_REQUEST)
 
         })
     })
 
     describe("Login", ()=> {
 
+        let userController : IUserController
+        let userService : Sinon.SinonStubbedInstance<IUserService>
+        let authToken : Sinon.SinonStubbedInstance<IAuthToken>
+
         const sandbox = createSandbox()
 
-        afterEach(()=> {
-            sandbox.restore()
+        beforeEach(()=> {
+            userService = sandbox.createStubInstance(UserService)
+            authToken = sandbox.createStubInstance(AuthToken)
+            userController = new UserController(userService, authToken)
         })
+
+        afterEach(()=> sandbox.restore())
 
         it("should responde an authorization token when the client is authentified", async () => {
             
             const expectedHeader = "Authorization"
+            const expectedToken = "token"
             const userData = commonData
-        
-            sandbox.stub(UserService, "login").resolves()
+            
             
             const [ request, response, next ] = generateMockRequestResponse({body :userData})
             const callbackHeader = sinon.spy((...args)=>response)
             response.header = callbackHeader
+
+            userService.register.resolves()
+            authToken.generate.returns(expectedToken)
            
-            await UserController.login(request, response, next)
+            await userController.login(request, response, next)
         
             expect(callbackHeader.getCall(0).args[0]).toBe(expectedHeader)
-            expect(callbackHeader.getCall(0).args[1].length > 10).toBeTruthy()
+            expect(callbackHeader.getCall(0).args[1]).toMatch(expectedToken)
             
         })
 
@@ -107,12 +131,12 @@ describe("User controller", () => {
             
             const userData = { username : "badUsername", password : "badPasss" }
             
-            sandbox.stub(UserService, "login").rejects(new ErrorService(HTTP_BAD_REQUEST, new ErrorDetail("type", "thing")))
+            userService.login.rejects(new ErrorDetail("type", "val"))
 
             const [ request, response ] = generateMockRequestResponse({body :userData})
             const next = sinon.spy()
             
-            await UserController.login(request, response, next)
+            await userController.login(request, response, next)
             expect(next.getCall(0).args[0]).toBeInstanceOf(ErrorService)
 
         })
