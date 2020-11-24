@@ -59,7 +59,7 @@ export default class PostProcessorMiddleware {
             .reduce((body : IELitteralObject, currentKey : string) => (body[currentKey] = req.body[currentKey], body), {})
             
             if(Object.keys(req.body).length !== requiredKeys.length) {
-                const error = new ErrorDetail(MISSING_KEYS, PostProcessor.errors.FILTER_KEYS_ERROR)
+                const error = new ErrorDetail(MISSING_KEYS, PostProcessorMiddleware.errors.FILTER_KEYS_ERROR)
                 next ( new ErrorService(HTTP_BAD_REQUEST, error) )
             }
 
