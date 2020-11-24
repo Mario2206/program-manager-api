@@ -31,7 +31,7 @@ describe("Exercise service", () => {
         it("should create the exercise when all fields are correct", async ()=> {
 
             const data = commonData
-
+            const exerciseService = new ExerciseService()
             fakeEntityManager.save.resolvesArg(0)
 
             try {

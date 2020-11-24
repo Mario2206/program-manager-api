@@ -3,7 +3,6 @@ module.exports = {
   testEnvironment: 'node',
   verbose: false,
   rootDir: './test/',
-  setupFilesAfterEnv: ["jest-sinon"],
+  setupFilesAfterEnv: ["jest-sinon", "./setup.ts"],
   runner : "groups",
-  globalSetup: "./setup.js",
 }

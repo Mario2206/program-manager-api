@@ -2,7 +2,7 @@ import {Container} from "inversify"
 
 import ControllerTypes, { IExerciseController, IUserController } from "./src/abstract/interface/int-controller"
 import ServiceTypes, { IExerciseService, IUserService } from "./src/abstract/interface/int-service"
-import CoreTypes, { IAuthToken, ICustomValidation, IDatabase } from "./src/abstract/interface/int-core"
+import CoreTypes, { IAuthToken, ICustomValidation, IDatabase, IEncryptedString, IImgUploader } from "./src/abstract/interface/int-core"
 
 import UserController from "./src/controller/user-controller"
 import UserService from "./src/services/user-service"
@@ -11,6 +11,8 @@ import Database from "./src/core/database/database"
 import CustomValidation from "./src/core/validation/custom-validation"
 import ExerciseService from "./src/services/exercise-service"
 import ExerciseController from "./src/controller/exercise-controller"
+import EncryptedString from "./src/core/encrypt/encrypted-string"
+import ImgUploader from "./src/core/uploader/img-uploader"
 
 const container = new Container()
 
@@ -23,6 +25,8 @@ container.bind<IExerciseService>(ServiceTypes.ExerciseService).to(ExerciseServic
 container.bind<IAuthToken>(CoreTypes.AuthToken).to(AuthToken)
 container.bind<IDatabase>(CoreTypes.Database).to(Database)
 container.bind<ICustomValidation>(CoreTypes.CustomValidation).to(CustomValidation)
+container.bind<IEncryptedString>(CoreTypes.EncryptedString).to(EncryptedString)
+container.bind<IImgUploader>(CoreTypes.ImgUploader).to(ImgUploader)
 
 
 export default container

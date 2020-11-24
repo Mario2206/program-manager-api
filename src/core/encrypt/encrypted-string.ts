@@ -5,17 +5,8 @@ import { IEncryptedString } from "../../abstract/interface/int-core"
 @injectable()
 export default class EncryptedString implements IEncryptedString{
     
-    private _content : string 
 
     private _salt = 10
-
-    constructor(text : string) {
-        this._content = text
-    }
-
-    public get value () : string {
-        return this._content
-    }
 
     public set salt (salt : number) {
         this._salt = salt
@@ -24,24 +15,8 @@ export default class EncryptedString implements IEncryptedString{
     /**
      * Encrypt data 
      */
-    public encrypt () : Promise<string> {
-
-        if(!this._content){ 
-            
-            throw new Error( "String content shouldn't be empty")
-        }
-
-        return new Promise((resolve, reject)=> {
-
-            bcrypt.hash(this._content, this._salt)
-
-            .then((hash : string) => {
-                this._content = hash
-                resolve()
-            })
-            .catch((e) => reject(e))
-
-        })
+    public encrypt (value : string) : Promise<string> {
+        return bcrypt.hash(value, this._salt);
     }
 
     /**
@@ -50,7 +25,7 @@ export default class EncryptedString implements IEncryptedString{
      * @param original 
      * @param encryptedString 
      */
-    public static compare(original : string, encryptedString : string) : Promise<boolean> {
+    public  compare(original : string, encryptedString : string) : Promise<boolean> {
         return bcrypt.compare(original, encryptedString)
     }
 

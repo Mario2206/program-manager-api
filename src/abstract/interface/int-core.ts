@@ -1,5 +1,6 @@
 import { Connection, EntityManager, EntityTarget, Repository } from "typeorm";
 import ErrorService from "../../core/error/error-service";
+import { middleware } from "../type/type-middleware";
 import { IELitteralObject } from "./int-common";
 
 export interface IDatabase {
@@ -24,20 +25,21 @@ export interface IAuthToken {
 }
 
 export interface IEncryptedString {
-    value : string 
     salt : number
-    encrypt() : Promise<string>
+    encrypt(value : string) : Promise<string>,
+    compare(original : string, encryptedString : string) : Promise<boolean>
 }
 
-export interface IEncryptedStringConstructable {
-    new(value : string) : IEncryptedString
+export interface IImgUploader {
+    upload (dir : string, fieldName : string) : middleware
 }
 
 const TYPES = {
     AuthToken : Symbol.for("IAuthToken"),
     CustomValidation : Symbol.for("CustomValidation"),
     Database : Symbol.for("IDatabase"),
-    EncryptedString : Symbol.for("IEncryptedStringConstructable")
+    EncryptedString : Symbol.for("IEncryptedString"),
+    ImgUploader : Symbol.for("IImgUploader")
 }
 
 export default TYPES

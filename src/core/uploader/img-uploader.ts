@@ -1,7 +1,10 @@
+import { injectable } from "inversify";
 import multer from "multer";
+import { IImgUploader } from "../../abstract/interface/int-core";
 import { middleware } from "../../abstract/type/type-middleware";
 
-export default class ImgUploader {
+@injectable()
+export default class ImgUploader implements IImgUploader{
 
     private static mimesTypes = [
         {
@@ -26,7 +29,7 @@ export default class ImgUploader {
      * 
      * @return middleware
      */
-    public static upload (dir : string, fieldName : string) : middleware {
+    public  upload (dir : string, fieldName : string) : middleware {
 
         const storage = this.configuation(dir)
 
@@ -35,7 +38,7 @@ export default class ImgUploader {
         return uploader
     }
 
-    private static configuation (dir : string) : multer.StorageEngine {
+    private  configuation (dir : string) : multer.StorageEngine {
         return multer.diskStorage({
 
             destination: function (req, file, cb) {

@@ -9,25 +9,13 @@ describe('CryptedString entity', () => {
 
             const text = "NormalText"
             
-            const cryptedText = new EncryptedString(text)
-            await cryptedText.encrypt()
+            const encryptedString = new EncryptedString()
+            const encryptedValue = await encryptedString.encrypt(text)
 
-            expect(cryptedText.value).not.toBe(text)
-            expect(cryptedText.value).not.toBe("")
+            expect(encryptedValue).not.toBe(text)
+            expect(encryptedValue).not.toBe("")
 
         })
-
-        it("should throw an error if the content is empty", async () => {
-
-            const text = ""
-            
-            const cryptedText = new EncryptedString(text)
-
-           
-            await expect(()=>cryptedText.encrypt()).toThrow(Error) 
-            
-        })
-
 
     })
 
@@ -37,9 +25,9 @@ describe('CryptedString entity', () => {
 
             const text = "NormalText"   
 
-            const encrypted = new EncryptedString(text)
-            await encrypted.encrypt()
-            const check = await EncryptedString.compare(text, encrypted.value)
+            const encrypted = new EncryptedString()
+            const encryptedValue = await encrypted.encrypt(text)
+            const check = await encrypted.compare(text, encryptedValue)
 
             expect(check).toBeTruthy()
         })
@@ -49,9 +37,9 @@ describe('CryptedString entity', () => {
             const text = "NormalText" 
             const uncorrectText = "uncorrect"  
 
-            const encrypted = new EncryptedString(text)
-            await encrypted.encrypt()
-            const check = await EncryptedString.compare(uncorrectText, encrypted.value)
+            const encryptedString = new EncryptedString()
+            const encryptedValue = await encryptedString.encrypt(text)
+            const check = await encryptedString.compare(uncorrectText, encryptedValue)
 
             expect(check).toBeFalsy()
         })

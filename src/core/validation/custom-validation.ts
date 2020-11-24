@@ -1,6 +1,5 @@
 import { validate } from "class-validator";
 import { injectable } from "inversify";
-import { resolve } from "path";
 import { ICustomValidation } from "../../abstract/interface/int-core";
 import { BAD_VALIDATION } from "../../constants/types-error";
 import ErrorDetail from "../error/error-detail";

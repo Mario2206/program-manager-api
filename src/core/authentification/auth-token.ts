@@ -1,9 +1,10 @@
 import { injectable } from "inversify"
 import jwt from "jsonwebtoken"
 import { IELitteralObject } from "../../abstract/interface/int-common"
+import { IAuthToken } from "../../abstract/interface/int-core"
 
 @injectable()
-export default class AuthToken {
+export default class AuthToken implements IAuthToken{
 
     public static errors = {
         CRYPT_KEY_EMPTY : "The private key shouldn't be empty"
@@ -56,8 +57,8 @@ export default class AuthToken {
      * 
      * @return IELitteralObject
      */
-    public static authorize (token : string, privateKey : string) : IELitteralObject{
-        const decoded = jwt.verify(token, privateKey)
+    public  authorize (token : string ) : IELitteralObject{
+        const decoded = jwt.verify(token, this._privateKey)
          if(decoded instanceof Object) {
             return {...decoded}
          } else {

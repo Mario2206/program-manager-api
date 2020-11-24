@@ -1,12 +1,12 @@
+import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
+
 import {UserSchema} from "../abstract/type/schema-model"
 import {User} from "../model/user"
-import EncryptedString from "../core/encrypt/encrypted-string"
-import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
-import ErrorDetail from "../core/error/error-detail"
-import {  injectable } from "inversify"
-import Service from "./service"
 import { IUserService } from "../abstract/interface/int-service"
 
+import ErrorDetail from "../core/error/error-detail"
+import Service from "./service"
+import {  injectable } from "inversify"
 
 @injectable()
 export default class UserService extends Service implements IUserService{
@@ -28,8 +28,7 @@ export default class UserService extends Service implements IUserService{
      */
     public  async register (providedData : UserSchema) : Promise<User> {
         
-        const encryptPassword = new EncryptedString(providedData.password)
-        await encryptPassword.encrypt()
+        const encryptPassword = await this._encryptedString.encrypt(providedData.password)
         
         const user = new User()
         
@@ -37,7 +36,7 @@ export default class UserService extends Service implements IUserService{
         user.firstname = providedData.firstname
         user.username = providedData.username
         user.mail = providedData.mail
-        user.password = encryptPassword.value
+        user.password = encryptPassword
         
         await this._validator.validate(user)
         
@@ -72,7 +71,7 @@ export default class UserService extends Service implements IUserService{
                 }
                 
                 
-                const check = await EncryptedString.compare(userId.password, user.password)
+                const check = await this._encryptedString.compare(userId.password, user.password)
                 
                 if(!check) {
                     return reject(new ErrorDetail( BAD_AUTH,"Password is uncorrect"))

@@ -1,27 +1,20 @@
 import { createSandbox, createStubInstance, SinonSandbox } from "sinon"
 import Database from "../../src/core/database/database"
 import * as typeorm from "typeorm"
+import { IDatabase } from "../../src/abstract/interface/int-core"
 
 /**
  * For mocking Database
  */
-export default class MockDatabase {
-
-    private sandbox: SinonSandbox
+export default class MockDatabase implements IDatabase{
     
-    constructor(fakeManager : any) {
-
-        this.sandbox = createSandbox()
-
-        this.sandbox.stub(Database, "getManager").returns(fakeManager)
+    public disconnect() : Promise<void>
+    public getManager()  {
+        return new MockEntityManager();
     }
-
-    /**
-     * For restoring the sandbox (remove all stubs)
-     */
-    public close() : void {
-         this.sandbox.restore()
-    }
+    public getConnection() : Connection
+    public getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity>
+    public clean(tableName : string) : Promise<void>
 }
 /**
  * For mocking entiy manager
