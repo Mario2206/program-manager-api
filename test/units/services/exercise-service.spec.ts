@@ -4,6 +4,7 @@ import { BAD_VALIDATION } from "../../../src/constants/types-error"
 import EncryptedString from "../../../src/core/encrypt/encrypted-string"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import CustomValidation from "../../../src/core/validation/custom-validation"
+import { User } from "../../../src/model/user"
 import ExerciseService from "../../../src/services/exercise-service"
 import MockDatabase, { MockEntityManager } from "../../utils/mock-database"
 
@@ -13,7 +14,8 @@ describe("Exercise service", () => {
         name : "Push-up",
         type : "PDC",
         image_path : "/path/",
-        description : "The description paragraph"
+        description : "The description paragraph",
+        owner : new User()
     }
 
     describe("When the exercise must be created", () => {

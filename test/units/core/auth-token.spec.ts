@@ -9,7 +9,8 @@ describe("Authentification entity", () => {
         it("should return a token", () => {
 
             const token = new AuthToken()
-            const tokenVal = token.generate()            
+            const tokenVal = token.generate()  
+                     
             expect(tokenVal).not.toBe("")
 
         })

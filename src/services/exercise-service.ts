@@ -8,13 +8,14 @@ export default class ExerciseService extends Service {
         BAD_TYPE : "The exercise has a bad type"
     }
 
-    public async create ({name, type, image_path, description} : ExerciseSchema) : Promise<Exercise> {
+    public async create ({name, type, image_path, description, owner} : ExerciseSchema) : Promise<Exercise> {
 
         const exercise = new Exercise()
         exercise.name = name 
         exercise.type = type 
         exercise.image_path = image_path
         exercise.description = description
+        exercise.owner = [owner]
         
         await this._validator.validate(exercise)
 

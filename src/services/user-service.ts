@@ -1,4 +1,4 @@
-import { BAD_AUTH, BAD_KEYS } from "../constants/types-error"
+import { BAD_AUTH, BAD_ID, BAD_KEYS } from "../constants/types-error"
 
 import {UserSchema} from "../abstract/type/schema-model"
 import {User} from "../model/user"
@@ -7,6 +7,7 @@ import { IUserService } from "../abstract/interface/int-service"
 import ErrorDetail from "../core/error/error-detail"
 import Service from "./service"
 import {  injectable } from "inversify"
+
 
 @injectable()
 export default class UserService extends Service implements IUserService{
@@ -64,8 +65,7 @@ export default class UserService extends Service implements IUserService{
                         
             this._database.getManager().findOne(User, connectId)
             .then(async (user : User | undefined) => {
-                
-                
+
                 if(!user) {
                     return reject(new ErrorDetail(BAD_AUTH, "User id is erroned"))
                 }
@@ -82,6 +82,27 @@ export default class UserService extends Service implements IUserService{
             })
         })
       
+        
+    }
+
+    /**
+     * For finding an user according the user id
+     * 
+     * @param userId 
+     * 
+     * @return Promise<User>
+     */
+    public find(userId : number) : Promise<User> {
+        return new Promise((resolve, reject) => {
+
+            this._database.getManager().findOneOrFail(User, userId)
+            .then((user : User)=> {
+                resolve(user)
+            })
+            .catch(() => {
+                reject( new ErrorDetail(BAD_ID, "User id is erroned") )
+            })
+        })
         
     }
 

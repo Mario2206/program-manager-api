@@ -1,9 +1,9 @@
-import { HTTP_BAD_REQUEST } from "../../../src/constants/http"
+import { HTTP_BAD_REQUEST, HTTP_CREATED } from "../../../src/constants/http"
 import { USER_CREATED } from "../../../src/constants/messages"
 import UserController from "../../../src/controller/user-controller"
 import ErrorService from "../../../src/core/error/error-service"
 import { generateMockRequestResponse } from "../../utils/utils"
-import sinon, { createSandbox, createStubInstance } from "sinon"
+import sinon, { createSandbox } from "sinon"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import UserService from "../../../src/services/user-service"
 import { IUserController } from "../../../src/abstract/interface/int-middleware"
@@ -41,7 +41,8 @@ describe("User controller", () => {
 
         afterEach(()=> sandbox.restore())
 
-        it("should subcribe the user", async () => {
+        it("should send a positive response (CREATED CODE)", async () => {
+            //SETUP
             const expectedRes = USER_CREATED
             const data = commonData
 
@@ -49,24 +50,27 @@ describe("User controller", () => {
 
             const [request, response, next] = generateMockRequestResponse({body : data})
 
-            response.json = jest.fn()
-
+            //ACT
             await userController.subscribeUser(request, response, next)
 
+            //ASSERT
             expect(next).not.toHaveBeenCalled()
+            expect(response.status).toHaveBeenCalledWith(HTTP_CREATED)
             expect(response.json).toHaveBeenCalledWith(expectedRes)
         })
 
         it("shouldn't subcribe the user if one key is missing", async () => {
-        
+            //SETUP
             const data = {...commonData, firstname : null}
 
             const [request, response, next] = generateMockRequestResponse({body : data})
 
             userService.register.rejects(new ErrorDetail("type", "value"))
 
+            //ACT
             await userController.subscribeUser(request, response, next)
 
+            //ASSERT
             expect(next).toBeCalled()
             expect(next.args[0][0]).toBeInstanceOf(ErrorService)
             expect(next.args[0][0].status).toBe(HTTP_BAD_REQUEST)
@@ -74,6 +78,7 @@ describe("User controller", () => {
         })
 
         it("shouldn't subcribe the user if the mail or username already exist", async () => {
+            //SETUP
             const data = commonData
             const data2 = {...data, username : "Other"}
             
@@ -81,8 +86,10 @@ describe("User controller", () => {
 
             userService.register.rejects(new ErrorDetail("type", "value"))
             
+            //ACT
             await userController.subscribeUser(request, response, next)
 
+            //ASSERT
             expect(next).toBeCalled()
             expect(next.args[0][0]).toBeInstanceOf(ErrorService)
             expect(next.args[0][0].status).toBe(HTTP_BAD_REQUEST)
@@ -107,7 +114,7 @@ describe("User controller", () => {
         afterEach(()=> sandbox.restore())
 
         it("should responde an authorization token when the client is authentified", async () => {
-            
+            //SETUP
             const expectedHeader = "Authorization"
             const expectedToken = "token"
             const userData = commonData
@@ -119,24 +126,28 @@ describe("User controller", () => {
 
             userService.register.resolves()
             authToken.generate.returns(expectedToken)
-           
+            
+            //ACT
             await userController.login(request, response, next)
-        
+            
+            //ASSERT
             expect(callbackHeader.getCall(0).args[0]).toBe(expectedHeader)
             expect(callbackHeader.getCall(0).args[1]).toMatch(expectedToken)
             
         })
 
-        it("should throw an error when the user isn't authentified", async () => {
-            
+        it("should pass an error when the user isn't authentified", async () => {
+            //SETUP
             const userData = { username : "badUsername", password : "badPasss" }
             
             userService.login.rejects(new ErrorDetail("type", "val"))
 
-            const [ request, response ] = generateMockRequestResponse({body :userData})
-            const next = sinon.spy()
+            const [ request, response, next ] = generateMockRequestResponse({body :userData})
             
+            //ACT
             await userController.login(request, response, next)
+
+            //ASSERT
             expect(next.getCall(0).args[0]).toBeInstanceOf(ErrorService)
 
         })

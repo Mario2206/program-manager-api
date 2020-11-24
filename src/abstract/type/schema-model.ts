@@ -1,3 +1,5 @@
+import { User } from "../../model/user"
+
 export type ModelEntity = {
     created_at? : Date,
     updated_at? : Date,
@@ -16,5 +18,6 @@ export type ExerciseSchema = {
     name : string,
     type : string,
     image_path : string,
-    description : string
+    description : string,
+    owner : User
 }

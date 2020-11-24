@@ -2,7 +2,7 @@
 import Sinon, { SinonSandbox } from "sinon"
 import { EntityManager } from "typeorm"
 import { ICustomValidation, IDatabase, IEncryptedString } from "../../../src/abstract/interface/int-core"
-import { BAD_AUTH, BAD_VALIDATION } from "../../../src/constants/types-error"
+import { BAD_AUTH, BAD_ID, BAD_VALIDATION } from "../../../src/constants/types-error"
 import EncryptedString from "../../../src/core/encrypt/encrypted-string"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import CustomValidation from "../../../src/core/validation/custom-validation"
@@ -207,6 +207,67 @@ describe("User Service", () => {
             
             await expect(userService.login(userId)).rejects.toEqual(expectedError)
             
+        })
+    })
+
+    describe("When finding a client", ()=> {
+
+
+        let mockDb : IDatabase;
+        let sandbox : SinonSandbox;
+        let fakeEntityManager : Sinon.SinonStubbedInstance<EntityManager>;
+        let validator : Sinon.SinonStubbedInstance<ICustomValidation>;
+        let encryptedString : IEncryptedString;
+
+        beforeEach(()=> {
+            fakeEntityManager = MockEntityManager.create()
+            const [db, box] = MockDatabase.create(fakeEntityManager)
+            mockDb = db 
+            sandbox = box
+            validator = sandbox.createStubInstance(CustomValidation)
+            encryptedString =sandbox.createStubInstance(EncryptedString)
+       })
+
+       afterEach(()=> {
+           sandbox.restore()
+       })
+
+        it("should return an user when the id is findable", async () => {
+            //SETUP
+            const userId = 1
+            const expectedUser = new User()
+            expectedUser.lastname = "lastname"
+            expectedUser.firstname = "firstname"
+            expectedUser.username = "username"
+            expectedUser.mail = "mail@mail.com"
+
+            const userService = new UserService(mockDb, validator, encryptedString)
+            fakeEntityManager.findOneOrFail.resolves(expectedUser)
+
+            //ACT
+            const user = await userService.find(userId)
+
+            //ASSERT
+            expect(user).toEqual(expectedUser)
+
+
+        })
+
+        it("should reject an error when the userId isn't findable", async () => {
+            //SETUP
+            const userId = 1
+            const expectedUser = new User()
+            expectedUser.lastname = "lastname"
+            expectedUser.firstname = "firstname"
+            expectedUser.username = "username"
+            expectedUser.mail = "mail@mail.com"
+
+            const userService = new UserService(mockDb, validator, encryptedString)
+            fakeEntityManager.findOneOrFail.rejects()
+
+            //ACT + ASSERT
+            await expect( () => userService.find(userId) ).rejects.toHaveProperty("type", BAD_ID)
+
         })
     })
 

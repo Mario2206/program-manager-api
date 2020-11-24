@@ -9,6 +9,9 @@ import ErrorService from "../../../src/core/error/error-service"
 import { HTTP_UNAUTH } from "../../../src/constants/http"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import { BAD_AUTH } from "../../../src/constants/types-error"
+import { User } from "../../../src/model/user"
+import { IUserService } from "../../../src/abstract/interface/int-service"
+import UserService from "../../../src/services/user-service"
 
 describe("Security middleware", ()=> {
 
@@ -17,34 +20,42 @@ describe("Security middleware", ()=> {
         let authToken : Sinon.SinonStubbedInstance<IAuthToken>
         let sandbox : SinonSandbox
         let securityMiddleware : ISecurityMiddleware
+        let userService : Sinon.SinonStubbedInstance<IUserService>
 
         beforeEach(()=> {
             sandbox = createSandbox()
             authToken = sandbox.createStubInstance(AuthToken)
-            securityMiddleware = new SecurityMiddleware(authToken)
-
+            userService = sandbox.createStubInstance(UserService)
+            securityMiddleware = new SecurityMiddleware(authToken, userService)
         })
 
         afterEach(()=> {
             sandbox.restore()
         })
 
-        it("should insert the payload from token in the request object when it's correct", ()=> {
+        it("should insert the authentified client in the request object when the token is correct", async ()=> {
             //SETUP
-            const expectedPayload = {payload : "the payload", otherParam : "otherParam"}
-
-            authToken.authorize.returns(expectedPayload)
+            const expectedAuthUser = new User()
+            expectedAuthUser.firstname = "firstname"
+            expectedAuthUser.lastname = "lastname"
+            expectedAuthUser.username = "Mario"
+            expectedAuthUser.mail = "mario@mail.com"
+            expectedAuthUser.password = "password"
 
             const [req, res, next] = generateMockRequestResponse()
-
+            
             req.headers.authorization = "Bearer token"
+            
+            userService.find.resolves(expectedAuthUser)
+            authToken.authorize.returns({id : 1})
 
             //ACT
-            securityMiddleware.authentification(req, res, next)
-
+            await securityMiddleware.authentification(req, res, next)
+            
+            
             //ASSERT
-            expect(req.payload).toEqual(expectedPayload)
-
+            expect(req.authClient).toEqual(expectedAuthUser)
+            
         })
 
         it("should next when the token is undefined or empty", ()=> {
@@ -71,6 +82,24 @@ describe("Security middleware", ()=> {
             req.headers.authorization = "BAD TOKEN"
 
             authToken.authorize.throws()
+            //ACT 
+            securityMiddleware.authentification(req, res, next)
+
+            //ASSERT 
+            expect(next.called).toBeTruthy()
+            expect(next.args[0][0]).toEqual(expectedError)
+        })
+
+        it("should next when the user isn't found", () => {
+            //SETUP 
+            const expectedError = new ErrorService(HTTP_UNAUTH, new ErrorDetail(BAD_AUTH, "Authentification token is erroned"))
+            const [req, res, next] = generateMockRequestResponse()
+
+            req.headers.authorization = "BAD TOKEN"
+
+            userService.find.throws()
+            authToken.authorize.rejects({id : 1})
+
             //ACT 
             securityMiddleware.authentification(req, res, next)
 

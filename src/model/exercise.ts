@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGenerat
 import { IsOneOf } from "../core/validation/is-one-of";
 import { Unique } from "../core/validation/unique";
 import Session from "./session"
+import { User } from "./user";
 
 @Entity()
 export default class Exercise {
@@ -36,4 +37,8 @@ export default class Exercise {
     @ManyToMany(()=> Session, session => session.id)
     @JoinTable()
     sessions!: Session[]
+
+    @ManyToMany(()=>User, user=>user.id)
+    @JoinTable()
+    owner! : User[]
 }
