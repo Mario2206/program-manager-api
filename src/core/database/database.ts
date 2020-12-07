@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import { Connection, createConnection, EntityManager, EntityTarget, getConnection, getManager, getRepository, Repository } from "typeorm";
-import { IDatabase } from "../../abstract/interface/int-core";
+import { IDatabase } from "./int-database";
+
 
 @injectable()
 export default class Database implements IDatabase {

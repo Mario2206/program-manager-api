@@ -1,9 +1,9 @@
 import { validate } from "class-validator";
 import { injectable } from "inversify";
-import { ICustomValidation } from "../../abstract/interface/int-core";
 import { BAD_VALIDATION } from "../../constants/types-error";
 import ErrorDetail from "../error/error-detail";
 import ErrorService from "../error/error-service";
+import { ICustomValidation } from "./int-custom-validation";
 
 @injectable()
 export default class CustomValidation implements ICustomValidation{

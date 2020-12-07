@@ -1,4 +1,4 @@
-import IEErrorService, { ErrorDetail } from "../../abstract/interface/int-error"
+import IEErrorService, { IErrorDetail } from "./int-error"
 
 export default class ErrorService implements IEErrorService  {
 
@@ -6,14 +6,14 @@ export default class ErrorService implements IEErrorService  {
         HTTP STATUS
     */
     protected _status : number
-    protected _message : ErrorDetail | ErrorDetail[]
+    protected _message : IErrorDetail | IErrorDetail[]
 
-    constructor(status : number, message : ErrorDetail | ErrorDetail[]) {
+    constructor(status : number, message : IErrorDetail | IErrorDetail[]) {
         this._status = status
         this._message = message
     }   
 
-    public get message() : ErrorDetail | ErrorDetail[]{
+    public get message() : IErrorDetail | IErrorDetail[]{
         return this._message
     }
 

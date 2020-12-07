@@ -17,7 +17,7 @@ describe('Exercise route', () => {
 
         beforeAll(async ()=>{
             server = await app()
-            await db.getConnection().runMigrations()
+            // await db.getConnection().runMigrations()
         })
 
         afterAll(  (done)=> {

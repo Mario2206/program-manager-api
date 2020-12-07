@@ -1,7 +1,8 @@
 import { injectable } from "inversify";
 import multer from "multer";
-import { IImgUploader } from "../../abstract/interface/int-core";
+
 import { middleware } from "../../abstract/type/type-middleware";
+import { IImgUploader } from "./int-img-uploader";
 
 @injectable()
 export default class ImgUploader implements IImgUploader{

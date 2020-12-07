@@ -2,11 +2,12 @@ import { BAD_AUTH, BAD_ID, BAD_KEYS } from "../constants/types-error"
 
 import {UserSchema} from "../abstract/type/schema-model"
 import {User} from "../model/user"
-import { IUserService } from "../abstract/interface/int-service"
+
 
 import ErrorDetail from "../core/error/error-detail"
 import Service from "./service"
 import {  injectable } from "inversify"
+import { IUserService } from "./int-user-service"
 
 
 @injectable()

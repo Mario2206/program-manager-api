@@ -1,9 +1,9 @@
 export default interface IEErrorService {
-    message : ErrorDetail | ErrorDetail[], 
+    message : IErrorDetail | IErrorDetail[], 
     status : number
 }
 
-export interface ErrorDetail  {
+export interface IErrorDetail  {
     type : string, 
     errorValue : string
 }

@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt"
 import { injectable } from "inversify"
-import { IEncryptedString } from "../../abstract/interface/int-core"
+import { IEncryptedString } from "./int-encrypted-string";
+
 
 @injectable()
-export default class EncryptedString implements IEncryptedString{
+export default class EncryptedString implements IEncryptedString {
     
 
     private _salt = 10

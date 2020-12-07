@@ -1,7 +1,8 @@
 import { injectable } from "inversify"
 import jwt from "jsonwebtoken"
 import { IELitteralObject } from "../../abstract/interface/int-common"
-import { IAuthToken } from "../../abstract/interface/int-core"
+import { IAuthToken } from "./int-auth-token"
+
 
 @injectable()
 export default class AuthToken implements IAuthToken{

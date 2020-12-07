@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express"
-import IEErrorService from "../../abstract/interface/int-error";
+import IEErrorService from "../error/int-error";
 import { HTTP_SERVER_ERROR } from "../../constants/http";
 import ErrorService from "../error/error-service";
 

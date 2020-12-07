@@ -1,5 +1,8 @@
 import { inject, injectable } from "inversify"
-import CoreTypes, { ICustomValidation, IDatabase, IEncryptedString } from "../abstract/interface/int-core"
+import CoreTypes from "../abstract/interface/int-core"
+import { IDatabase } from "../core/database/int-database"
+import { IEncryptedString } from "../core/encrypt/int-encrypted-string"
+import { ICustomValidation } from "../core/validation/int-custom-validation"
 
 @injectable()
 export default abstract class Service {

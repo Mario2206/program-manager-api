@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { IExerciseController } from "../abstract/interface/int-middleware";
-import { IExerciseService } from "../abstract/interface/int-service";
+
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SERVER_ERROR } from "../constants/http";
 import ErrorService from "../core/error/error-service";
 import ServiceTypes from '../abstract/interface/int-service'
@@ -9,6 +8,8 @@ import { EXO_CREATED } from "../constants/messages";
 import { CustomRequest } from "../abstract/interface/int-express";
 import ErrorDetail from "../core/error/error-detail";
 import { SERVER_ERROR } from "../constants/types-error";
+import { IExerciseController } from "./int-exercise-controller";
+import { IExerciseService } from "../services/int-exercise-service";
 
 @injectable()
 export default class ExerciseController implements IExerciseController {

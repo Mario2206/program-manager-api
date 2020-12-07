@@ -7,9 +7,6 @@ import Database from "../../../src/core/database/database"
 
 
 
-/**
- * @group user
- */
 describe("user route", () => {
     
     let server : Server;
