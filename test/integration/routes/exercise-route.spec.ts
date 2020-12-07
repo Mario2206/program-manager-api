@@ -5,30 +5,29 @@ import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_UNAUTH } from "../../../src/consta
 import { EXERCISE_ROUTE } from "../../../src/constants/routes"
 import { BAD_AUTH } from "../../../src/constants/types-error"
 import Database from "../../../src/core/database/database"
+import { authentification } from "../../utils/authentification"
 
 
 describe('Exercise route', () => {
-    
-    let server : Server;
-    const db = new Database()
-    const authToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDYyMjg2OTZ9.8fJFkTsxSNp7QIuODT3S0BieIb7MtTMAZLljBO5q72o"
 
+    let server : Server;
+    let authToken = ""
+    const db = new Database()
+     
+    beforeAll(async () => {
+        authToken = await authentification() 
+        server = await app()
+    })
+
+    afterAll(async (done)=> {
+        await db.clean("user")
+        await db.disconnect()
+        server.close(done)
+    })
+    
     describe("When the client wants to create an exercise", () => {
 
-        beforeAll(async ()=>{
-            server = await app()
-            // await db.getConnection().runMigrations()
-        })
-
-        afterAll(  (done)=> {
-            db.disconnect()
-            .then (()=> {
-                server.close(done)
-            })
-                
-        })
-        
-        afterEach(()=> {
+        afterEach( ()=> {
             return db.clean("exercise")
         })
 
@@ -49,9 +48,10 @@ describe('Exercise route', () => {
             .field("description", body.description)
             .attach("picture", "test/utils/assets/link.png")
             .set("authorization", authToken)
-            // .expect(expectedResult)
+            .expect(expectedResult)
             .end((err, res) => {
-                //ASSERT                
+                //ASSERT   
+                console.log(err)             
                 expect(err).toBeNull()
                 done()
             })
@@ -125,12 +125,13 @@ describe('Exercise route', () => {
             const expectedResult = HTTP_BAD_REQUEST
             const body = {
                 name : "exercise-name",
-                tips : "PDC", 
+                badField : "PDC", 
                 description : "Exercise description"
             }
 
             request(server)
             .post(EXERCISE_ROUTE)
+            .set("authorization", authToken)
             .send(body)
             .expect(expectedResult)
             .end((err) => {
@@ -150,6 +151,7 @@ describe('Exercise route', () => {
 
             request(server)
             .post(EXERCISE_ROUTE)
+            .set("authorization", authToken)
             .send(body)
             .expect(expectedResult)
             .end((err) => {
@@ -160,11 +162,7 @@ describe('Exercise route', () => {
 
     })
 
-    // describe('When the client wants to get exercises', () => {
-      
-    //     it("should responde all exercise ")
 
-    // })
-    
+
 
 })

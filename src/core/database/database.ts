@@ -26,7 +26,7 @@ export default class Database implements IDatabase {
     }
 
     public  getRepository<Entity>(entityClass : EntityTarget<Entity>) : Repository<Entity> {
-        return getRepository(entityClass)
+        return this.getConnection().getRepository(entityClass)
     }
     
     public   clean(tableName : string) : Promise<void> {

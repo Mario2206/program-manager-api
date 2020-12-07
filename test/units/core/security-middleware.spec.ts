@@ -1,17 +1,20 @@
 import AuthToken from "../../../src/core/authentification/auth-token"
 import  { createSandbox, SinonSandbox } from "sinon"
 import { generateMockRequestResponse } from "../../utils/utils"
-import { IAuthToken } from "../../../src/abstract/interface/int-core"
+
 import Sinon from "sinon"
-import { ISecurityMiddleware } from "../../../src/abstract/interface/int-middleware"
+
 import SecurityMiddleware from "../../../src/core/authentification/security-middleware"
 import ErrorService from "../../../src/core/error/error-service"
 import { HTTP_UNAUTH } from "../../../src/constants/http"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import { BAD_AUTH } from "../../../src/constants/types-error"
 import { User } from "../../../src/model/user"
-import { IUserService } from "../../../src/abstract/interface/int-service"
+
 import UserService from "../../../src/services/user-service"
+import { IAuthToken } from "../../../src/core/authentification/int-auth-token"
+import { ISecurityMiddleware } from "../../../src/core/authentification/int-security-middleware"
+import { IUserService } from "../../../src/services/int-user-service"
 
 describe("Security middleware", ()=> {
 
@@ -90,7 +93,31 @@ describe("Security middleware", ()=> {
             expect(next.args[0][0]).toEqual(expectedError)
         })
 
-        it("should next when the user isn't found", () => {
+        it("should next  when the user is found", async () => {
+            //SETUP 
+            const expectedAuthUser = new User()
+            expectedAuthUser.firstname = "firstname"
+            expectedAuthUser.lastname = "lastname"
+            expectedAuthUser.username = "Mario"
+            expectedAuthUser.mail = "mario@mail.com"
+            expectedAuthUser.password = "password"
+
+            const [req, res, next] = generateMockRequestResponse()
+            
+            req.headers.authorization = "Bearer token"
+            
+            userService.find.resolves(expectedAuthUser)
+            authToken.authorize.returns({id : 1})
+            
+            await securityMiddleware.authentification(req, res, next)
+
+            //ASSERT 
+            expect(next.called).toBeTruthy()
+           
+        })
+
+
+        it("should next with error when the user isn't found", () => {
             //SETUP 
             const expectedError = new ErrorService(HTTP_UNAUTH, new ErrorDetail(BAD_AUTH, "Authentification token is erroned"))
             const [req, res, next] = generateMockRequestResponse()

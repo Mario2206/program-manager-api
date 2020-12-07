@@ -16,29 +16,27 @@ async function app () : Promise<Server> {
     const db = new Database()
 
     await db.connect()
-
-    return new Promise( (resolve)=> {
             
-        const app = express()
+    const app = express()
 
-        app.use(bodyparser.json())
+    app.use(bodyparser.json())
+    
+    app.use(USER_ROUTE, userRoute)
+
+    app.use(EXERCISE_ROUTE, exerciseRoute)
+
+    app.use(errorHandler)
+
+    const server : Server = app.listen(process.env.PORT, async  () => {
         
-        app.use(USER_ROUTE, userRoute)
+        console.log("Server open on " + process.env.PORT);
 
-        app.use(EXERCISE_ROUTE, exerciseRoute)
-
-        app.use(errorHandler)
-
-        const server : Server = app.listen(process.env.PORT, async  () => {
-            
-            console.log("Server open on " + process.env.PORT);
-
-            resolve(server)
-        
-        })
-
-        return server
+        // resolve(server)
+    
     })
+
+    return server
+   
     
 }  
 

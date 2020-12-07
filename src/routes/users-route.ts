@@ -2,8 +2,9 @@ import {Router} from "express"
 import { LOG_ROUTE, SUB_ROUTE } from "../constants/routes"
 import PostProcessor from "../core/post-processor-middleware"
 import container from "../../inversify.config"
-import { IUserController } from "../abstract/interface/int-middleware"
+
 import controllerTypes from "../abstract/interface/int-middleware"
+import { IUserController } from "../controller/int-user-controller"
 
 const router = Router()
 

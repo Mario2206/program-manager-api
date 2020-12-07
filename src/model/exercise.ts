@@ -12,7 +12,9 @@ export default class Exercise {
     id!:number 
 
     @Column()
-    @Unique()
+    @Unique({
+        message : "The exercise name already exist"
+    })
     name!: string
 
     @Column()

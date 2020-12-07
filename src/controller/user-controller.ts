@@ -1,13 +1,15 @@
 import { Response, Request, NextFunction } from "express";
 import { inject, injectable } from "inversify";
 
-import { IUserController } from "../abstract/interface/int-middleware";
 import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_SUCCESS } from "../constants/http";
 import { USER_CREATED } from "../constants/messages";
-import ControllerTypes, { IUserService } from "../abstract/interface/int-service";
-import CoreTypes, { IAuthToken } from "../abstract/interface/int-core"
+import ControllerTypes from "../abstract/interface/int-service";
+import CoreTypes from "../abstract/interface/int-core"
 
 import ErrorService from "../core/error/error-service";
+import { IAuthToken } from "../core/authentification/int-auth-token";
+import { IUserController } from "./int-user-controller";
+import { IUserService } from "../services/int-user-service";
 
 @injectable()
 export default class UserController implements IUserController {
@@ -43,9 +45,12 @@ export default class UserController implements IUserController {
 
         try {
             
-            await this._userService.login(req.body)
+            const identifyUser = await this._userService.login(req.body)
                 
             this._authToken.setExpirationDate('24h')
+
+            this._authToken.setCustomPayload({id : identifyUser.id})
+
             const tokenValue = this._authToken.generate()
             
             res.status(HTTP_SUCCESS).header("Authorization", "Bearer " + tokenValue).json("Connected")

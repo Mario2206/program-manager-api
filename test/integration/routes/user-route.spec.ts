@@ -66,7 +66,7 @@ describe("user route", () => {
             request(server)
             .post(USER_ROUTE + SUB_ROUTE)
             .send(body)
-            .expect(HTTP_BAD_REQUEST)
+            .expect(expectedResult)
             .end((err, res)=>{
 
                 expect(err).toBeNull()
