@@ -16,6 +16,7 @@ export default class ExerciseService extends Service {
         exercise.image_path = image_path
         exercise.description = description
         exercise.owner = [owner]
+        exercise.createdBy = owner
         
         await this._validator.validate(exercise)
 

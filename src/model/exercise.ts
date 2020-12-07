@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { IsOneOf } from "../core/validation/is-one-of";
 import { Unique } from "../core/validation/unique";
 import Session from "./session"
@@ -39,6 +39,10 @@ export default class Exercise {
     @ManyToMany(()=> Session, session => session.id)
     @JoinTable()
     sessions!: Session[]
+
+    @ManyToOne(()=>User, user => user.id)
+    @JoinTable()
+    createdBy!: User
 
     @ManyToMany(()=>User, user=>user.id)
     @JoinTable()
