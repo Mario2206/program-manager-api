@@ -8,10 +8,10 @@
     "start:watch": "nodemon",
     "build": "tsc",
     "lint": "eslint ./src/index.ts",
-    "test": "jest",
+    "test": "jest --maxWorkers=1",
     "test:watch": "jest --watch",
     "test:unit": "jest --testPathPattern=test/units",
-    "test:integration": "jest --testPathPattern=/test/integration"
+    "test:integration": "jest --testPathPattern=/test/integration --maxWorkers=1"
   },
   "author": "",
   "license": "ISC",
