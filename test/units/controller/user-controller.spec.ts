@@ -6,11 +6,12 @@ import { generateMockRequestResponse } from "../../utils/utils"
 import sinon, { createSandbox } from "sinon"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import UserService from "../../../src/services/user-service"
-import { IUserController } from "../../../src/abstract/interface/int-middleware"
-import { IUserService } from "../../../src/abstract/interface/int-service"
-import { IAuthToken } from "../../../src/abstract/interface/int-core"
 import AuthToken from "../../../src/core/authentification/auth-token"
 import Sinon from "sinon"
+import { User } from "../../../src/model/user"
+import { IUserController } from "../../../src/controller/int-user-controller"
+import { IUserService } from "../../../src/services/int-user-service"
+import { IAuthToken } from "../../../src/core/authentification/int-auth-token"
 
 
 /**
@@ -98,6 +99,8 @@ describe("User controller", () => {
     })
 
     describe("Login", ()=> {
+        const user = new User()
+        user.id = 1
 
         let userController : IUserController
         let userService : Sinon.SinonStubbedInstance<IUserService>
@@ -124,7 +127,7 @@ describe("User controller", () => {
             const callbackHeader = sinon.spy((...args)=>response)
             response.header = callbackHeader
 
-            userService.register.resolves()
+            userService.login.resolves(user)
             authToken.generate.returns(expectedToken)
             
             //ACT

@@ -31,7 +31,7 @@ export default class ImgUploader implements IImgUploader{
      * @return middleware
      */
     public  upload (dir : string, fieldName : string) : middleware {
-
+        
         const storage = this.configuation(dir)
 
         const uploader = multer({storage}).single(fieldName)
@@ -43,7 +43,7 @@ export default class ImgUploader implements IImgUploader{
         return multer.diskStorage({
 
             destination: function (req, file, cb) {
-                cb(null, 'public/uploads/' + dir)
+                cb(null, dir)
               },
 
               filename: function (req, file, cb) {

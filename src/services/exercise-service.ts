@@ -24,4 +24,8 @@ export default class ExerciseService extends Service {
 
     }
 
+    public async getOne(id : string | number) : Promise<Exercise> {
+        return this._database.getManager().findOneOrFail(Exercise, id)
+    }
+
 }

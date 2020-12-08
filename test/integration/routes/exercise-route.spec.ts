@@ -1,10 +1,11 @@
 import { Server } from "http"
 import request  from "supertest"
 import app from "../../../src/app"
-import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_UNAUTH } from "../../../src/constants/http"
+import { HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_NOT_FOUND, HTTP_SUCCESS, HTTP_UNAUTH } from "../../../src/constants/http"
 import { EXERCISE_ROUTE } from "../../../src/constants/routes"
 import { BAD_AUTH } from "../../../src/constants/types-error"
 import Database from "../../../src/core/database/database"
+import Exercise from "../../../src/model/exercise"
 import { authentification } from "../../utils/authentification"
 
 
@@ -158,6 +159,60 @@ describe('Exercise route', () => {
                 expect(err).toBeNull()
                 done()
             })
+        })
+
+    })
+
+    describe("When the client wants to get an exercise", () => {
+        
+        let exercise : Exercise
+        const exerciseData = {
+            name : "exercise-name",
+            type : "PDC", 
+            description : "Exercise description",
+            image_path : "/path/"
+        }
+
+        beforeAll(async ()=> {
+            exercise = await db.getRepository(Exercise).save(exerciseData)
+        })
+
+        afterAll(async () => {
+            await db.clean("exercise")
+        })
+
+        it("(Authentified) should responde an exercise when it exists", (done)=> {
+
+            const expectedResult = HTTP_SUCCESS
+            
+            request(server)
+            .get(EXERCISE_ROUTE + "/" + exercise.id)
+            .set("authorization", authToken)
+            .expect(expectedResult)
+            .end((err) => {
+
+                expect(err).toBeNull()
+                done()
+
+            })
+
+        })
+
+        it("(Authentified) should responde an error (not found) when the exercise doesn't exist", (done)=> {
+
+            const expectedResult = HTTP_NOT_FOUND
+            
+            request(server)
+            .get(EXERCISE_ROUTE + "/" + "bad id")
+            .set("authorization", authToken)
+            .expect(expectedResult)
+            .end((err) => {
+
+                expect(err).toBeNull()
+                done()
+
+            })
+
         })
 
     })

@@ -1,9 +1,13 @@
 import Sinon, {   SinonSandbox } from "sinon"
-import { ICustomValidation, IDatabase, IEncryptedString } from "../../../src/abstract/interface/int-core"
+import { EntityManager } from "typeorm"
 import { BAD_VALIDATION } from "../../../src/constants/types-error"
+import { IDatabase } from "../../../src/core/database/int-database"
 import EncryptedString from "../../../src/core/encrypt/encrypted-string"
+import { IEncryptedString } from "../../../src/core/encrypt/int-encrypted-string"
 import ErrorDetail from "../../../src/core/error/error-detail"
 import CustomValidation from "../../../src/core/validation/custom-validation"
+import { ICustomValidation } from "../../../src/core/validation/int-custom-validation"
+import Exercise from "../../../src/model/exercise"
 import { User } from "../../../src/model/user"
 import ExerciseService from "../../../src/services/exercise-service"
 import MockDatabase, { MockEntityManager } from "../../utils/mock-database"
@@ -18,28 +22,27 @@ describe("Exercise service", () => {
         owner : new User()
     }
 
+    let mockDb : IDatabase;
+    let sandbox : SinonSandbox;
+    let fakeEntityManager : Sinon.SinonStubbedInstance<EntityManager>;
+    let validator : Sinon.SinonStubbedInstance<ICustomValidation>;
+    let encryptedString : IEncryptedString;
+
+    beforeEach(()=> {
+        fakeEntityManager = MockEntityManager.create()
+        const [db, box] = MockDatabase.create(fakeEntityManager)
+        mockDb = db 
+        sandbox = box
+        validator = sandbox.createStubInstance(CustomValidation)
+        encryptedString =sandbox.createStubInstance(EncryptedString)
+   })
+
+   afterEach(()=> {
+       sandbox.restore()
+   })
+
     describe("When the exercise must be created", () => {
-        //DEPENDENCY MOCKING
-        let mockDb : IDatabase;
-        let sandbox : SinonSandbox;
-        let fakeEntityManager : any;
-        let validator : Sinon.SinonStubbedInstance<ICustomValidation>;
-        let encryptedString : IEncryptedString;
 
-        beforeEach(()=> {
-             fakeEntityManager = MockEntityManager.create()
-             const [db, box] = MockDatabase.create(fakeEntityManager)
-             mockDb = db 
-             sandbox = box
-             validator = sandbox.createStubInstance(CustomValidation)
-             encryptedString =sandbox.createStubInstance(EncryptedString)
-        })
-
-        afterEach(()=> {
-            sandbox.restore()
-        })
-
-        
         it("should create the exercise when all fields are correct", async ()=> {
 
             const data = commonData
@@ -114,6 +117,45 @@ describe("Exercise service", () => {
                 expect(e[0]).toBeInstanceOf(ErrorDetail)
                 expect(e[0].type).toBe(BAD_VALIDATION)
             }
+
+        })
+
+    })
+
+    describe("When it has to return only one exercise", () => {
+
+        const exercise = new Exercise()
+        exercise.id = 1
+        exercise.name = commonData.name
+        exercise.type = commonData.type
+        exercise.owner = [commonData.owner]
+        exercise.createdBy = commonData.owner
+        exercise.image_path = commonData.image_path
+        exercise.description = commonData.description
+
+        it("should return an exercise if it exists", async () => {
+            //SETUP
+            const exerciseService = new ExerciseService(mockDb, validator, encryptedString)
+            const exerciseId = exercise.id
+            fakeEntityManager.findOneOrFail.resolves(exercise)
+
+            //ACT
+            const exoFound = await exerciseService.getOne(exerciseId)
+
+            //ASSERT
+
+            expect(exoFound).toEqual(exercise)            
+
+        })
+
+        it("should throw an error if no exercise is found", async () => {
+            //SETUP
+            const exerciseService = new ExerciseService(mockDb, validator, encryptedString)
+            const exerciseId = exercise.id
+            fakeEntityManager.findOneOrFail.rejects()
+
+            //ACT + ASSERT
+            await expect(()=> exerciseService.getOne(exerciseId)).rejects.toThrowError()
 
         })
 

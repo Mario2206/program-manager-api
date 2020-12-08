@@ -7,9 +7,9 @@ It's an interface which enables sportsperson to store their sport program and to
 * Subscription
 * Login (with Bearer Token)
 * Exercise addition (with miniature which represents the exercise)
+* Exercise receiving
 
 ## Features in progress
 
-* Exercise receiving
 * Exercise Updating
 * Session Creation

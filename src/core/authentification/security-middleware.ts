@@ -24,8 +24,7 @@ export default class SecurityMiddleware implements ISecurityMiddleware{
 
     public async authentification (req : CustomRequest, res : Response, next : NextFunction) : Promise<void>{
         
-        const token = req.headers.authorization
-       
+        const token = req.headers.authorization 
         
         if(token) {
            
@@ -34,13 +33,13 @@ export default class SecurityMiddleware implements ISecurityMiddleware{
                 const tokenValue = token.split("Bearer")[1].trim()
                 
                 const { id } = this._authToken.authorize(tokenValue)
-
+                
                 req.authClient = await this._userService.find(id)
                 
                 return next()
 
             } catch(e) {
-
+                
                 return next(new ErrorService(HTTP_UNAUTH, new ErrorDetail(BAD_AUTH, "Authentification token is erroned")))
             }
 
